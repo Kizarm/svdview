@@ -1,0 +1,27 @@
+# kdevelop
+.kde*
+*.kdev4
+# generated files
+Makefile
+moc/
+obj/
+qrc_view.cpp
+svdview
+tests/f4Disco/STM32F40x.svd
+tests/f4Disco/inc/stm32f40x.h
+tests/f4Disco/work/Entertainer.c
+tests/f4Disco/work/build/
+tests/f4Disco/work/hlp/gen
+tests/f4Disco/work/hlp/miditones
+tests/f4Disco/work/midi.elf
+tests/f4Disco/work/midi.lst
+tests/f4Disco/work/midi.map
+tests/f4Disco/work/miditone.c
+tests/arm/build/
+tests/arm/firmware.elf
+tests/arm/firmware.lst
+tests/arm/firmware.map
+tests/defs.h
+tests/stat.h
+tests/test.h
+
