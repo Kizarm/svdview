@@ -1,0 +1,102 @@
+--- generated.h	2017-11-26 17:19:19.168412423 +0100
++++ stm32f40x.h	2017-11-26 17:18:41.136803369 +0100
+@@ -6157,6 +6157,7 @@
+   }
+ #endif // __cplusplus
+ } ;
++#if 0
+ struct GPIO_MODER_s { /*!< GPIO port mode register */
+   union {
+       __RWB uint32_t R;
+@@ -6490,6 +6491,7 @@
+   }
+ #endif // __cplusplus
+ } ;
++#endif // 0
+ struct RCC_CR_s { /*!< clock control register */
+   union {
+       __RWB uint32_t R;
+@@ -6554,6 +6556,17 @@
+       __RWB uint32_t PLLQ3            :  1; /*!< Ofs=27, w=1 Main PLL (PLL) division factor for USB OTG FS, SDIO and random number generator clocks */
+             uint32_t unused3          :  4;
+     } B;
++    struct {
++      __RWB uint32_t PLLM             :  6; /*!< Ofs=0, w=6 Division factor for the main PLL (PLL) and audio PLL (PLLI2S) input clock */
++      __RWB uint32_t PLLN             :  9; /*!< Ofs=6, w=9 Main PLL (PLL) multiplication factor for VCO */
++            uint32_t unused0          :  1;
++      __RWB uint32_t PLLP             :  2; /*!< Ofs=16, w=2 Main PLL (PLL) division factor for main system clock */
++            uint32_t unused1          :  4;
++      __RWB uint32_t PLLSRC           :  1; /*!< Ofs=22, w=1 Main PLL(PLL) and audio PLL (PLLI2S) entry clock source */
++            uint32_t unused2          :  1;
++      __RWB uint32_t PLLQ             :  4; /*!< Ofs=24, w=4 Main PLL (PLL) division factor for USB OTG FS, SDIO and random number generator clocks */
++            uint32_t unused3          :  4;
++    } G;
+   } ;
+ #ifdef __cplusplus
+   RCC_PLLCFGR_s(): R(0x24003010u) {};
+@@ -6571,10 +6584,8 @@
+   union {
+       __RWB uint32_t R;
+     struct {
+-      __RWB uint32_t SW0              :  1; /*!< Ofs=0, w=1 System clock switch */
+-      __RWB uint32_t SW1              :  1; /*!< Ofs=1, w=1 System clock switch */
+-      __ROB uint32_t SWS0             :  1; /*!< Ofs=2, w=1 System clock switch status */
+-      __ROB uint32_t SWS1             :  1; /*!< Ofs=3, w=1 System clock switch status */
++      __RWB uint32_t SW               :  2; /*!< Ofs=0, w=2 System clock switch */
++      __ROB uint32_t SWS              :  2; /*!< Ofs=2, w=2 System clock switch status */
+       __RWB uint32_t HPRE             :  4; /*!< Ofs=4, w=4 AHB prescaler */
+             uint32_t unused0          :  2;
+       __RWB uint32_t PPRE1            :  3; /*!< Ofs=10, w=3 APB Low speed prescaler (APB1) */
+@@ -15834,16 +15845,22 @@
+   __RW struct EXTI_PR_s         PR;              /*!< Ofs= 20, W=4 Pending register (EXTI_PR) */
+ }  EXTI_Type; /* W=24=0x18 */
+ typedef struct GPIO_s { /*!< peripheral group GPIO */
+-  __RW struct GPIO_MODER_s      MODER;           /*!< Ofs=  0, W=4 GPIO port mode register */
+-  __RW struct GPIO_OTYPER_s     OTYPER;          /*!< Ofs=  4, W=4 GPIO port output type register */
+-  __RW struct GPIO_OSPEEDR_s    OSPEEDR;         /*!< Ofs=  8, W=4 GPIO port output speed register */
+-  __RW struct GPIO_PUPDR_s      PUPDR;           /*!< Ofs= 12, W=4 GPIO port pull-up/pull-down register */
+-  __RO struct GPIO_IDR_s        IDR;             /*!< Ofs= 16, W=4 GPIO port input data register */
+-  __RW struct GPIO_ODR_s        ODR;             /*!< Ofs= 20, W=4 GPIO port output data register */
+-  __WO struct GPIO_BSRR_s       BSRR;            /*!< Ofs= 24, W=4 GPIO port bit set/reset register */
+-  __RW struct GPIO_LCKR_s       LCKR;            /*!< Ofs= 28, W=4 GPIO port configuration lock register */
+-  __RW struct GPIO_AFRL_s       AFRL;            /*!< Ofs= 32, W=4 GPIO alternate function low register */
+-  __RW struct GPIO_AFRH_s       AFRH;            /*!< Ofs= 36, W=4 GPIO alternate function high register */
++  __RW uint32_t      MODER;            /*!< Ofs=  0, W=4 GPIO port mode register */
++  __RW uint32_t     OTYPER;            /*!< Ofs=  4, W=4 GPIO port output type register */
++  __RW uint32_t    OSPEEDR;            /*!< Ofs=  8, W=4 GPIO port output speed register */
++  __RW uint32_t      PUPDR;            /*!< Ofs= 12, W=4 GPIO port pull-up/pull-down register */
++  __RO uint32_t        IDR;            /*!< Ofs= 16, W=4 GPIO port input data register */
++  __RW uint32_t        ODR;            /*!< Ofs= 20, W=4 GPIO port output data register */
++  union {
++  __WO uint32_t       BSRR;            /*!< Ofs= 24, W=4 GPIO port bit set/reset register */
++  struct {
++  __WO uint16_t       BSRRL;           /*!< Ofs= 24, W=2 GPIO port bit set/reset register LOW  */
++  __WO uint16_t       BSRRH;           /*!< Ofs= 26, W=2 GPIO port bit set/reset register HOGH */
++  };
++  };
++  __RW uint32_t       LCKR;            /*!< Ofs= 28, W=4 GPIO port configuration lock register */
++  __RW uint32_t       AFR[2];          /*!< Ofs= 32, W=8 GPIO alternate function low register */
++//__RW uint32_t       AFRH;            /*!< Ofs= 36, W=4 GPIO alternate function high register */
+ }  GPIO_Type; /* W=40=0x28 */
+ typedef struct CRC_s { /*!< peripheral group CRC */
+   __RW uint32_t DR;              /*!< Ofs=  0, W=4 Data register */
+@@ -16700,9 +16717,10 @@
+ static FSMC_Type              * const FSMC                   = (FSMC_Type              * const) 0xA0000000u; /*!< Flexible static memory controller */
+ #endif // __cplusplus
+ 
+-#if 0  // koliduje s CMSIS a chybi potrebna systemova preruseni
++//#if 0  // koliduje s CMSIS a chybi potrebna systemova preruseni
+ //! Pouzijte COPY / PASTE do prislusnych souboru
+ typedef enum IRQn {
++#include "cm4sysirq.h"
+   WWDG_IRQn                = 0, /*!< Window Watchdog interrupt */
+   PVD_IRQn                 = 1, /*!< PVD through EXTI line detection interrupt */
+   TAMP_STAMP_IRQn          = 2, /*!< Tamper and TimeStamp interrupts through the EXTI line */
+@@ -16783,6 +16801,7 @@
+   DCMI_IRQn                = 78, /*!< DCMI global interrupt */
+   FPU_IRQn                 = 81, /*!< FPU interrupt */
+ } IRQn_Type;
++#if 0
+ //! Vector table declarations (device part)
+   void WWDG_IRQHandler     (void) ALIAS(Default_Handler);
+   void PVD_IRQHandler      (void) ALIAS(Default_Handler);

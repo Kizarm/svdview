@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<device schemaVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD_Schema_1_1.xsd">
+  <name>TEST</name>
+  <version>0.2</version>
+  <description>TEST_BITS</description>
+  <!-- this is really a M0+ core -->
+  <cpu>
+    <name>CM0</name>
+    <revision>r0p0</revision>
+    <endian>little</endian>
+    <mpuPresent>0</mpuPresent>
+    <fpuPresent>0</fpuPresent>
+    <nvicPrioBits>2</nvicPrioBits>
+    <vendorSystickConfig>0</vendorSystickConfig>
+  </cpu>
+  <headerDefinitionsPrefix>TEST_</headerDefinitionsPrefix>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <size>32</size>
+  <peripherals>
+    <peripheral>
+  <name>USART0</name>
+  <description>USART</description>
+  <groupName>USART</groupName>
+  <baseAddress>0x40064000</baseAddress>
+  <addressBlock>
+  <offset>0x0</offset>
+  <size>0xFFF</size>
+  <usage>registers</usage>
+  </addressBlock>
+  <interrupt>
+  <name>UART0</name>
+  <value>3</value>
+  </interrupt>
+  <registers>           
+  <register>          
+    <name>CFG</name>        
+    <description>USART Configuration register. Basic USART configuration settings that typically are not changed during operation.</description>        
+    <addressOffset>0x000</addressOffset>        
+    <access>read-write</access>       
+    <resetValue>0</resetValue>        
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>ENABLE</name>   
+        <description>USART Enable.</description>    
+        <bitRange>[0:0]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>DISABLED_THE_USART_</name>
+            <description>Disabled. The USART is disabled and the internal state machine and counters are reset. While Enable = 0, all USART interrupts  are disabled. When Enable is set again, CFG and most other control bits remain unchanged. For instance, when re-enabled, the USART will immediately generate a TxRdy interrupt if  enabled because the transmitter has been reset and is therefore available.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>ENABLED_THE_USART_I</name>
+            <description>Enabled. The USART is enabled for operation.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[1:1]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>DATALEN</name>    
+        <description>Selects the data size for the USART.</description>   
+        <bitRange>[3:2]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>7_BIT_DATA_LENGTH_</name>
+            <description>7 bit Data length.</description>
+            <value>0x0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>8_BIT_DATA_LENGTH_</name>
+            <description>8 bit Data length.</description>
+            <value>0x1</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>9_BIT_DATA_LENGTH_T</name>
+            <description>9 bit data length. The 9th bit is commonly used for addressing in multidrop mode. See the ADDRDET bit in the CTRL register.</description>
+            <value>0x2</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>RESERVED_</name>
+            <description>Reserved.</description>
+            <value>0x3</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>PARITYSEL</name>    
+        <description>Selects what type of parity is used by the USART.</description>    
+        <bitRange>[5:4]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>NO_PARITY_</name>
+            <description>No parity.</description>
+            <value>0x0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>RESERVED_</name>
+            <description>Reserved.</description>
+            <value>0x1</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>EVEN_PARITY_ADDS_A_</name>
+            <description>Even parity. Adds a bit to each character such that the number of 1s in a transmitted character is even, and the number of 1s in a received character is expected to be even.</description>
+            <value>0x2</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>ODD_PARITY_ADDS_A_B</name>
+            <description>Odd parity. Adds a bit to each character such that the number of 1s in a transmitted character is odd, and the number of 1s in a received character is expected to be odd.</description>
+            <value>0x3</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>STOPLEN</name>    
+        <description>Number of stop bits appended to transmitted data. Only a single stop bit is required for received data.</description>    
+        <bitRange>[6:6]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>1_STOP_BIT_</name>
+            <description>1 stop bit.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>2_STOP_BITS_THIS_SE</name>
+            <description>2 stop bits. This setting should only be used for asynchronous communication.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Only write 0 to this bit.</description>    
+        <bitRange>[7:7]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[8:8]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>CTSEN</name>    
+        <description>CTS Enable. Determines whether CTS is used for flow control. CTS can be from the input pin, or from the USART's own RTS if loopback mode is enabled. See Section 16.7.3 for more information.</description>    
+        <bitRange>[9:9]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>NO_FLOW_CONTROL_THE</name>
+            <description>No flow control. The transmitter does not receive any automatic flow control signal.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>FLOW_CONTROL_ENABLED</name>
+            <description>Flow control enabled. The transmitter uses external or internal CTS for flow control purposes.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[10:10]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>SYNCEN</name>   
+        <description>Selects synchronous or asynchronous operation.</description>   
+        <bitRange>[11:11]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>ASYNCHRONOUS_MODE_IS</name>
+            <description>Asynchronous mode is selected.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>SYNCHRONOUS_MODE_IS_</name>
+            <description>Synchronous mode is selected.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>CLKPOL</name>   
+        <description>Selects the clock polarity and sampling edge of received data in synchronous mode.</description>   
+        <bitRange>[12:12]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>FALLING_EDGE_UN_RXD</name>
+            <description>Falling edge. Un_RXD is sampled on the falling edge of SCLK.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>RISING_EDGE_UN_RXD_</name>
+            <description>Rising edge. Un_RXD is sampled on the rising edge of SCLK.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[13:13]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>SYNCMST</name>    
+        <description>Synchronous mode Master select.</description>    
+        <bitRange>[14:14]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>SLAVE_WHEN_SYNCHRON</name>
+            <description>Slave. When synchronous mode is enabled, the USART is a slave.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>MASTER_WHEN_SYNCHRO</name>
+            <description>Master. When synchronous mode is enabled, the USART is a master. In asynchronous mode, the baud rate clock will be output on SCLK if it is connected to a pin.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>LOOP</name>   
+        <description>Selects data loopback mode.</description>    
+        <bitRange>[15:15]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>NORMAL_OPERATION_</name>
+            <description>Normal operation.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>LOOPBACK_MODE_THIS_</name>
+            <description>Loopback mode. This provides a mechanism to perform diagnostic loopback testing for USART data. Serial data from the transmitter (Un_TXD) is connected internally to serial input of the receive (Un_RXD). Un_TXD and Un_RTS activity will also appear on external pins if these functions are configured to appear on device pins. The receiver RTS signal is also looped back to CTS and performs flow control if enabled by CTSEN.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:16]</bitRange>    
+          
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>CTRL</name>       
+    <description>USART Control register. USART control settings that are more likely to change during operation.</description>        
+    <addressOffset>0x004</addressOffset>        
+    <access>read-write</access>       
+    <resetValue>0</resetValue>        
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[0:0]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>TXBRKEN</name>    
+        <description>Break Enable.</description>    
+        <bitRange>[1:1]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>NORMAL_OPERATION_</name>
+            <description>Normal operation.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>CONTINUOUS_BREAK_IS_</name>
+            <description>Continuous break is sent immediately when this bit is set, and remains until this bit is cleared. A break may be sent without danger of corrupting any currently transmitting character if the transmitter is first disabled (TXDIS in CTRL is set) and then waiting for the transmitter to be disabled (TXDISINT in STAT = 1) before writing 1 to TXBRKEN.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>ADDRDET</name>    
+        <description>Enable address detect mode.</description>    
+        <bitRange>[2:2]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>ENABLED_THE_USART_R</name>
+            <description>Enabled. The USART receiver is enabled for all incoming data.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>DISABLED_THE_USART_</name>
+            <description>Disabled. The USART receiver ignores incoming data that does not have the most significant bit of the data (typically the 9th bit) = 1. When the data MSB bit = 1, the receiver treats the incoming data normally, generating a received data interrupt. Software can then check the data to see if this is an address that should be handled. If it is, the ADDRDET bit is cleared by software and further incoming data is handled normally.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[5:3]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>TXDIS</name>    
+        <description>Transmit Disable.</description>    
+        <bitRange>[6:6]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>NOT_DISABLED_USART_</name>
+            <description>Not disabled. USART transmitter is not disabled.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>DISABLED_USART_TRAN</name>
+            <description>Disabled. USART transmitter is disabled after any character currently being transmitted is complete. This feature can be used to facilitate software flow control.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[7:7]</bitRange>    
+          
+      </field>      
+      <field>     
+        <name>CC</name>   
+        <description>Continuous Clock generation. By default, SCLK is only output while data is being transmitted in synchronous mode.</description>    
+        <bitRange>[8:8]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>CLOCK_ON_CHARACTER_</name>
+            <description>Clock on character. In synchronous mode, SCLK cycles only when characters are being sent on Un_TXD or to complete a character that is being received.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>CONTINUOUS_CLOCK_SC</name>
+            <description>Continuous clock. SCLK runs continuously in synchronous mode, allowing characters to be received on Un_RxD independently from transmission on Un_TXD).</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>CLRCC</name>    
+        <description>Clear Continuous Clock.</description>    
+        <bitRange>[9:9]</bitRange>    
+        <enumeratedValues>    
+        <name>ENUM</name>   
+          <enumeratedValue> 
+            <name>NO_AFFECT_ON_THE_CC_</name>
+            <description>No affect on the CC bit.</description>
+            <value>0</value>
+          </enumeratedValue>  
+          <enumeratedValue> 
+            <name>AUTO_CLEAR_THE_CC_B</name>
+            <description>Auto-clear. The CC bit is automatically cleared when a complete character has been received. This bit is cleared at the same time.</description>
+            <value>1</value>
+          </enumeratedValue>  
+        </enumeratedValues>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:10]</bitRange>    
+          
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>STAT</name>       
+    <description>USART Status register. The complete status value can be read here. Writing 1s clears some bits in the register. Some bits can be cleared by writing a 1 to them.</description>       
+    <addressOffset>0x008</addressOffset>        
+    <access>read-write</access>       
+    <resetValue>0x000E</resetValue>       
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>RXRDY</name>    
+        <description>Receiver Ready flag. When 1, indicates that data is available to be read from the receiver buffer. Cleared after a read of the RXDATA or RXDATASTAT registers.</description>   
+        <bitRange>[0:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXIDLE</name>   
+        <description>Receiver Idle. When 0, indicates that the receiver is currently in the process of receiving data. When 1, indicates that the receiver is not currently in the process of receiving data.</description>   
+        <bitRange>[1:1]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXRDY</name>    
+        <description>Transmitter Ready flag. When 1, this bit indicates that data may be written to the transmit buffer. Previous data may still be in the process of being transmitted. Cleared when data is written to TXDATA until the data is moved to the transmit shift register.</description>   
+        <bitRange>[2:2]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXIDLE</name>   
+        <description>Transmitter Idle. When 0, indicates that the transmitter is currently in the process of sending data.When 1, indicate that the transmitter is not currently in the process of sending data.</description>    
+        <bitRange>[3:3]</bitRange>    
+      </field>      
+      <field>     
+        <name>CTS</name>    
+        <description>This bit reflects the current state of the CTS signal, regardless of the setting of the CTSEN bit in the CFG register. This will be the value of the CTS input pin unless loopback mode is enabled.</description>    
+        <bitRange>[4:4]</bitRange>    
+      </field>      
+      <field>     
+        <name>DELTACTS</name>   
+        <description>This bit is set when a change in the state is detected for the CTS flag above. This bit is cleared by software.</description>    
+        <bitRange>[5:5]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXDISINT</name>   
+        <description>Transmitter Disabled Interrupt flag. When 1, this bit indicates that the USART transmitter is fully idle after being disabled via the TXDIS in the CFG register (TXDIS = 1).</description>   
+        <bitRange>[6:6]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[7:7]</bitRange>    
+      </field>      
+      <field>     
+        <name>OVERRUNINT</name>   
+        <description>Overrun Error interrupt flag. This flag is set when a new character is received while the receiver buffer is still in use. If this occurs, the newly received character in the shift register is lost.</description>   
+        <bitRange>[8:8]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[9:9]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXBRK</name>    
+        <description>Received Break. This bit reflects the current state of the receiver break detection logic. It is set when the Un_RXD pin remains low for 16 bit times. Note that FRAMERRINT will also be set when this condition occurs because the stop bit(s) for the character would be missing. RXBRK is cleared when the Un_RXD pin goes high.</description>    
+        <bitRange>[10:10]</bitRange>    
+      </field>      
+      <field>     
+        <name>DELTARXBRK</name>   
+        <description>This bit is set when a change in the state of receiver break detection occurs. Cleared by software.</description>    
+        <bitRange>[11:11]</bitRange>    
+      </field>      
+      <field>     
+        <name>START</name>    
+        <description>This bit is set when a start is detected on the receiver input and subsequently confirmed by a mid-bit sample. Its purpose is primarily to allow wakeup from Power-down mode immediately when a start is detected. Cleared by software.</description>    
+        <bitRange>[12:12]</bitRange>    
+      </field>      
+      <field>     
+        <name>FRAMERRINT</name>   
+        <description>Framing Error interrupt flag. This flag is set when a character is received with a missing stop bit at the expected location. This could be an indication of a baud rate or configuration mismatch with the transmitting source.</description>   
+        <bitRange>[13:13]</bitRange>    
+      </field>      
+      <field>     
+        <name>PARITYERRINT</name>   
+        <description>Parity Error interrupt flag. This flag is set when a parity error is detected in a received character, if parity is enabled via the Parity field in the CFG register.</description>    
+        <bitRange>[14:14]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXNOISEINT</name>   
+        <description>Received Noise interrupt flag. This bit is valid when there is a character to be read in the RXDATA register and reflects the status of that character. Three samples of received data are taken in order to determine the value of each received data bit, except in synchronous mode. This acts as a noise filter if one sample disagrees. The Noise bit is set when a received data bit contains one disagreeing sample. This could indicate line noise, a baud rate or character format mismatch, or loss of synchronization during data reception. RXNOISEINT is not updated during a received break.</description>   
+        <bitRange>[15:15]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:16]</bitRange>    
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>INTENSET</name>       
+    <description>Interrupt Enable read and Set register. Contains an individual interrupt enable bit for each potential USART interrupt. A complete value may be read from this register. Writing a 1 to any implemented bit position causes that bit to be set.</description>        
+    <addressOffset>0x00C</addressOffset>        
+    <access>read-write</access>       
+    <resetValue>0</resetValue>        
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>RXRDYEN</name>    
+        <description>When 1, enables an interrupt when there is a received character available to be read from the RXDATA register.</description>   
+        <bitRange>[0:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[1:1]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXRDYEN</name>    
+        <description>When 1, enables an interrupt when the TXDATA register is available to take another character to transmit.</description>    
+        <bitRange>[2:2]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[4:3]</bitRange>    
+      </field>      
+      <field>     
+        <name>DELTACTSEN</name>   
+        <description>When 1, enables an interrupt when there is a change in the state of the CTS input.</description>   
+        <bitRange>[5:5]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXDISINTEN</name>   
+        <description>When 1, enables an interrupt when the transmitter is fully disabled as indicated by the TXDISINT flag in STAT. See description of the TXDISINT bit for details.</description>    
+        <bitRange>[6:6]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[7:7]</bitRange>    
+      </field>      
+      <field>     
+        <name>OVERRUNEN</name>    
+        <description>When 1, enables an interrupt when an overrun error occurred.</description>   
+        <bitRange>[8:8]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[10:9]</bitRange>   
+      </field>      
+      <field>     
+        <name>DELTARXBRKEN</name>   
+        <description>When 1, enables an interrupt when a change of state has occurred in the detection of a received break condition (break condition asserted or deasserted).</description>    
+        <bitRange>[11:11]</bitRange>    
+      </field>      
+      <field>     
+        <name>STARTEN</name>    
+        <description>When 1, enables an interrupt when a received start bit has been detected.</description>    
+        <bitRange>[12:12]</bitRange>    
+      </field>      
+      <field>     
+        <name>FRAMERREN</name>    
+        <description>When 1, enables an interrupt when a framing error has been detected.</description>   
+        <bitRange>[13:13]</bitRange>    
+      </field>      
+      <field>     
+        <name>PARITYERREN</name>    
+        <description>When 1, enables an interrupt when a parity error has been detected.</description>    
+        <bitRange>[14:14]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXNOISEEN</name>    
+        <description>When 1, enables an interrupt when noise is detected. See description of the RXNOISEINT bit in Table 164.</description>   
+        <bitRange>[15:15]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:16]</bitRange>    
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>INTENCLR</name>       
+    <description>Interrupt Enable Clear register. Allows clearing any combination of bits in the INTENSET register. Writing a 1 to any implemented bit position causes the corresponding bit to be cleared.</description>       
+    <addressOffset>0x010</addressOffset>        
+    <access>write-only</access>       
+    <resetValue>0</resetValue>        
+    <resetMask>0x00000000</resetMask>       
+    <fields>        
+      <field>     
+        <name>RXRDYCLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[0:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[1:1]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXRDYCLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[2:2]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[4:3]</bitRange>    
+      </field>      
+      <field>     
+        <name>DELTACTSCLR</name>    
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[5:5]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXDISINTCLR</name>    
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[6:6]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[7:7]</bitRange>    
+      </field>      
+      <field>     
+        <name>OVERRUNCLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[8:8]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[10:9]</bitRange>   
+      </field>      
+      <field>     
+        <name>DELTARXBRKCLR</name>    
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[11:11]</bitRange>    
+      </field>      
+      <field>     
+        <name>STARTCLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[12:12]</bitRange>    
+      </field>      
+      <field>     
+        <name>FRAMERRCLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[13:13]</bitRange>    
+      </field>      
+      <field>     
+        <name>PARITYERRCLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[14:14]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXNOISECLR</name>   
+        <description>Writing 1 clears the corresponding bit in the INTENSET register.</description>   
+        <bitRange>[15:15]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:16]</bitRange>    
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>RXDATA</name>       
+    <description>Receiver Data register. Contains the last character received.</description>        
+    <addressOffset>0x014</addressOffset>        
+    <access>read-only</access>        
+    <resetValue>0</resetValue>        
+    <resetMask>0x00000000</resetMask>
+    <readAction>modify</readAction>
+    <fields>        
+      <field>     
+        <name>RXDAT</name>    
+        <description>The USART Receiver Data register contains the next received character. The number of bits that are relevant depends on the USART configuration settings.</description>   
+        <bitRange>[8:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved, the value read from a reserved bit is not defined.</description>   
+        <bitRange>[31:9]</bitRange>   
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>RXDATASTAT</name>       
+    <description>Receiver Data with Status register. Combines the last character received with the current USART receive status. Allows software to recover incoming data and status together.</description>        
+    <addressOffset>0x018</addressOffset>        
+    <access>read-only</access>        
+    <resetValue>0</resetValue>        
+    <resetMask>0x00000000</resetMask>   
+        <readAction>modify</readAction>   
+    <fields>        
+      <field>     
+        <name>RXDAT</name>    
+        <description>The USART Receiver Data register contains the next received character. The number of bits that are relevant depends on the USART configuration settings.</description>   
+        <bitRange>[8:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved, the value read from a reserved bit is not defined.</description>   
+        <bitRange>[12:9]</bitRange>   
+      </field>      
+      <field>     
+        <name>FRAMERR</name>    
+        <description>Framing Error status flag. This bit is valid when there is a character to be read in the RXDATA register and reflects the status of that character. This bit will set when the character in RXDAT was received with a missing stop bit at the expected location. This could be an indication of a baud rate or configuration mismatch with the transmitting source.</description>    
+        <bitRange>[13:13]</bitRange>    
+      </field>      
+      <field>     
+        <name>PARITYERR</name>    
+        <description>Parity Error status flag. This bit is valid when there is a character to be read in the RXDATA register and reflects the status of that character. This bit will be set when a parity error is detected in a received character.</description>   
+        <bitRange>[14:14]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXNOISE</name>    
+        <description>Received Noise flag. See description of the RxNoiseInt bit in Table 164.</description>   
+        <bitRange>[15:15]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved, the value read from a reserved bit is not defined.</description>   
+        <bitRange>[31:16]</bitRange>    
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>TXDATA</name>       
+    <description>Transmit Data register. Data to be transmitted is written here.</description>        
+    <addressOffset>0x01C</addressOffset>        
+    <access>read-write</access>       
+    <resetValue>0</resetValue>        
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>TXDAT</name>    
+        <description>Writing to the USART Transmit Data Register causes the data to be transmitted as soon as the transmit shift register is available.</description>   
+        <bitRange>[8:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Only zero should be written.</description>   
+        <bitRange>[31:9]</bitRange>   
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>BRG</name>        
+    <description>Baud Rate Generator register. 16-bit integer baud rate divisor value.</description>        
+    <addressOffset>0x020</addressOffset>        
+    <access>read-write</access>       
+    <resetValue>0</resetValue>        
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>BRGVAL</name>   
+        <description>This value is used to divide the USART input clock to determine the baud rate, based on the input clock from the FRG. 0 = The FRG clock is used directly by the USART function. 1 = The FRG clock is divided by 2 before use by the USART function. 2 = The FRG clock is divided by 3 before use by the USART function. ... 0xFFFF = The FRG clock is divided by 65,536 before use by the USART function.</description>    
+        <bitRange>[15:0]</bitRange>   
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:16]</bitRange>    
+      </field>      
+    </fields>       
+  </register>         
+  <register>          
+    <name>INTSTAT</name>        
+    <description>Interrupt status register. Reflects interrupts that are currently enabled.</description>       
+    <addressOffset>0x024</addressOffset>        
+    <access>read-only</access>        
+    <resetValue>0x0005</resetValue>       
+    <resetMask>0xFFFFFFFF</resetMask>       
+    <fields>        
+      <field>     
+        <name>RXRDY</name>    
+        <description>Receiver Ready flag.</description>   
+        <bitRange>[0:0]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[1:1]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXRDY</name>    
+        <description>Transmitter Ready flag.</description>    
+        <bitRange>[2:2]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[4:3]</bitRange>    
+      </field>      
+      <field>     
+        <name>DELTACTS</name>   
+        <description>This bit is set when a change in the state of the CTS input is detected.</description>   
+        <bitRange>[5:5]</bitRange>    
+      </field>      
+      <field>     
+        <name>TXDISINT</name>   
+        <description>Transmitter Disabled Interrupt flag.</description>   
+        <bitRange>[6:6]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[7:7]</bitRange>    
+      </field>      
+      <field>     
+        <name>OVERRUNINT</name>   
+        <description>Overrun Error interrupt flag.</description>    
+        <bitRange>[8:8]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[10:9]</bitRange>   
+      </field>      
+      <field>     
+        <name>DELTARXBRK</name>   
+        <description>This bit is set when a change in the state of receiver break detection occurs.</description>   
+        <bitRange>[11:11]</bitRange>    
+      </field>      
+      <field>     
+        <name>START</name>    
+        <description>This bit is set when a start is detected on the receiver input.</description>    
+        <bitRange>[12:12]</bitRange>    
+      </field>      
+      <field>     
+        <name>FRAMERRINT</name>   
+        <description>Framing Error interrupt flag.</description>    
+        <bitRange>[13:13]</bitRange>    
+      </field>      
+      <field>     
+        <name>PARITYERRINT</name>   
+        <description>Parity Error interrupt flag.</description>   
+        <bitRange>[14:14]</bitRange>    
+      </field>      
+      <field>     
+        <name>RXNOISEINT</name>   
+        <description>Received Noise interrupt flag.</description>   
+        <bitRange>[15:15]</bitRange>    
+      </field>      
+      <field>     
+        <name>RESERVED</name>   
+        <description>Reserved. Read value is undefined, only zero should be written.</description>    
+        <bitRange>[31:16]</bitRange>    
+      </field>      
+    </fields>       
+  </register>         
+</registers>            
+
+    </peripheral>
+    <peripheral derivedFrom="USART0">
+      <name>USART1</name>
+      <baseAddress>0x40068000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0xFFF</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <interrupt>
+        <name>UART1</name>
+        <value>4</value>
+      </interrupt>
+    </peripheral>
+    <peripheral derivedFrom="USART0">
+      <name>USART2</name>
+      <baseAddress>0x4006C000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0xFFF</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <interrupt>
+        <name>UART2</name>
+        <value>5</value>
+      </interrupt>
+    </peripheral>
+
+  </peripherals>
+</device>
