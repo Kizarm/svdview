@@ -19,15 +19,26 @@ celého čipu a z tohoto stromu vygenerovat třeba hlavičku pro C/C++. To už t
 není, protože někdo chápe šířku slova v bitech, někdo v bytech, jsou tam různě popisovaná
 pole registrů, jejich seskupování do tříd si také dělá každý po svém, takže univerzální
 metoda zřejmě neexistuje. Ale jsou k tomu zdrojáky, které se dají přiohnout a pak to může
-fungovat skoro pro všechny čipy. Ale bacha - v samotných svd souborech jsou chyby.
+fungovat skoro pro všechny čipy. Ale bacha - už v samotných svd souborech mohou být chyby.
 
 Co je nesporná výhoda - formát té hlavičky si může každý přiohnout po svém. Pokud tam nechcete
 ty uniony a bitfieldy, lze to přepnout do režimu klasického výpisu a lze si zvolit, zda konstanty
 chcete jako statické nebo jako definice preprocesoru. Já třeba používám C++ a tak definice
 registru jako struktury může obsahovat i metody. To se dá docela dobře použít např. pro nastavování
-skupin bitů najednou. Příklady jsou v adresáři ./tests/arm/. V adresáři ./tests/f4Disco/work/ je
-přepsán starší projekt pro F4 Discovery - midi player, což už je složitější a ukazuje, že
-vygenerovaná hlavička je zřejmě použitelná.
+skupin bitů najednou postupem read-modify-write. Příklady jsou v adresáři ./tests/arm/.
+V adresáři ./tests/f4Disco/work/ je přepsán starší projekt pro F4 Discovery - midi player,
+což už je složitější a ukazuje, že vygenerovaná hlavička je zřejmě použitelná.
+
+Funguje to tedy pro soubory od STM, pro některá LPC od NXP, málokterý Atmel a snad i pro některé
+exotičtější typy. Freescale (a asi i jiní) má v svd souborech nelogické věci, asi by to šlo
+zkorigovat, ale chce to RM a srovnat si co tam má opravdu být. Fakticky když programujeme
+přímo do registrů, je dobré mít RM otevřen a údaje průběžně aslespoň trochu kontrolovat.
+Některé věci v hlavičce lze pak snadno opravit, je to mnohem méně práce než to psát od podlahy
+znova. A kvůli tomu jsem to dělal.
+
+Celé je to uděláno v Qt ve verzi 4.x, Qt5 jsem netestoval, ale taky by neměly být větší problémy.
+Pro testy je potřeba arm-none-eabi-gcc/g++, testováno s verzí 6.3.1, g++ musí umět rozšíření C++14.
+Všechny Makefile jsou psány pro Linux, ve Win s tím budou potíže (příkazy rm, mv, wget ...).
 
 Tento program je rozšiřován v naději, že bude užitečný, avšak BEZ JAKÉKOLIV ZÁRUKY. Neposkytují se ani odvozené záruky
 PRODEJNOSTI anebo VHODNOSTI PRO URČITÝ ÚČEL. Další podrobnosti hledejte v Obecné veřejné licenci GNU (http://www.gnugpl.cz/).
