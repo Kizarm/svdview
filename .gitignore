@@ -7,7 +7,8 @@ moc/
 obj/
 qrc_view.cpp
 svdview
-tests/f4Disco/STM32F40x.svd
+#tohle lovit v kalnych vodach internetu neni dobry napad
+#tests/f4Disco/STM32F40x.svd
 tests/f4Disco/inc/stm32f40x.h
 tests/f4Disco/work/Entertainer.c
 tests/f4Disco/work/build/

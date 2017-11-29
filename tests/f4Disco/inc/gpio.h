@@ -138,7 +138,7 @@ class GpioClass {
       io->PUPDR   |=  (p   << dno);
     }
     void setAF (unsigned af) {
-      register unsigned int pd,pn = num;
+      unsigned int pd,pn = num;
       pd = (pn & 7) << 2; pn >>= 3;
       io->AFR[pn] &= ~(0xFU << pd);
       io->AFR[pn] |=  (  af << pd);
