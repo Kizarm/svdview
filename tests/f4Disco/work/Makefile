@@ -25,6 +25,10 @@ INCLUDE_PATHS = . ../inc ../lib/inc
 ##########################################################################
 # GNU GCC OR clang compiler - verze pro ARM - crosscompiler
 ##########################################################################
+# Instrukční sada thumb, cpu Cortex-Mx
+ MFLAGS = -mthumb -mcpu=$(CPU_TYPE)
+#MFLAGS = -mmcu=atmega64
+#MFLAGS = -m32
  CROSS_COMPILE = arm-none-eabi-
 #CROSS_COMPILE = avr-
 # Můžeme zkusit použít i clang - pak COMPILER = clang
@@ -36,14 +40,14 @@ ifeq ($(COMPILER),clang)
 CLVER =-3.8
 CC  = clang$(CLVER)
 CXX = clang++$(CLVER)
-CFLAGS += -target arm -mfloat-abi=soft -fshort-enums -O3
+CFLAGS += --target=thumbv7em-none-eabi -mfloat-abi=soft -fshort-enums -Oz
 # Linkování se obvykle provádí pomocí gcc, lze přímo ld, ale mohou být problémy s knihovnami
 LD  = $(CROSS_COMPILE)ld
 else
 CC  = $(CROSS_COMPILE)gcc
 CXX = $(CROSS_COMPILE)g++
 # Optimalizace
-CFLAGS += -Os
+CFLAGS += -Os $(MFLAGS)
 LD  = $(CC)
 endif
 # Assembler (*.s) lze překládat i pomocí gcc (-x assembler-with-cpp)
@@ -64,16 +68,11 @@ LD_SCRIPT = stm32_ram.ld
 # DEFINES = ARM_CM3=1
 # Podmineny preklad, cesta k hlavičkám
 CFLAGS += $(addprefix -D,$(DEFINES)) $(addprefix -I,$(INCLUDE_PATHS))
-# Instrukční sada thumb, cpu Cortex-Mx
- MFLAGS = -mthumb -mcpu=$(CPU_TYPE)
-#MFLAGS = -mmcu=atmega64
-#MFLAGS = -m32
 ifneq ($(COMPILER),clang)
 # Vytvořit listing s příponou .lst (divné, ale - kouzlit se dá všelijak)
 # clang tento přepínač neakceptuje, protože funguje trochu jinak
 CFLAGS += -Wa,-adhlns=$(@:%.o=%.lst)
 endif
-CFLAGS += $(MFLAGS)
 # přelož, všechna varování, debug info
 CFLAGS += -c -Wall -g
 # Umístit kód funkcí i proměnné do zvláštních sekcí
@@ -143,7 +142,7 @@ $(BLD):
 # Vyčištění adresáře
 clean:
 	rm -f $(BLD)* *.map *.lst *.elf *.hex *.bin $(MIDI).c miditone.c
-	rm -f ./hlp/gen ./hlp/miditones
+	rm -f hlp/gen hlp/miditones
 ############################################################
 $(GHEAD):
 	cd .. && $(MAKE) -f Makefile all
