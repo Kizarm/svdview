@@ -1,6 +1,9 @@
 QT      += core gui xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4) {
+  QT += widgets
+}
 QMAKE_CXXFLAGS += -Wno-unused-variable # Fix to build with GCC 4.8
+DEFINES += QT_MAJOR=$$QT_MAJOR_VERSION
 
 TARGET   = svdview
 TEMPLATE = app

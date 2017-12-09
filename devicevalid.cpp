@@ -184,7 +184,7 @@ void group::validate() {
   IOreg last = registers.last();
   unsigned long ctrl = last.offset + ((last.size * last.array) >> 3);
   if (size != ctrl) {
-    qDebug("size error at %s %ld != %ld", name.toAscii().constData(), size, ctrl);
+    qDebug("size error at %s %ld != %ld", name.toLatin1().constData(), size, ctrl);
     size = ctrl;
   }
   // TODO : finalni kontrola na stejna jmena (kvuli polim - stejna jmena, ruzne ofsety)

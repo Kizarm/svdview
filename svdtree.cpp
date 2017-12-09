@@ -1,4 +1,6 @@
 #include <QtGui>
+#include <QMessageBox>
+#include <QHeaderView>
 
 #include "svdtree.h"
 #include "devicetree.h"
@@ -7,8 +9,11 @@ SvdTree::SvdTree (QWidget *parent)
   : QTreeWidget (parent) {
   QStringList labels;
   labels << tr ("Property") << tr ("Description");
-
+#if QT_MAJOR > 4
+  header()->setSectionResizeMode (QHeaderView::Interactive);
+#else
   header()->setResizeMode (QHeaderView::Interactive);
+#endif //QT_MAJOR
   setHeaderLabels (labels);
 
   folderIcon.addPixmap (style()->standardPixmap (QStyle::SP_DirClosedIcon),

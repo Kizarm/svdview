@@ -1,4 +1,10 @@
 #include <QtGui>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
 
 #include "mainwindow.h"
 #include "svdtree.h"
@@ -21,7 +27,6 @@ void MainWindow::open() {
   QString fileName =
     QFileDialog::getOpenFileName (this, tr ("Open SVD File"),
                                   QDir::currentPath(),
-                                  // QDir::homePath() + "/.local/lib/python2.7/site-packages/cmsis_svd/data",
                                   tr ("SVD Files (*.svd *.xml)"));
   if (fileName.isEmpty())
     return;
