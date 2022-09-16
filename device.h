@@ -89,6 +89,7 @@ struct group {
   void validate ();
   bool eq (group & g);
   void append (IOreg & r);
+  bool not_used () const;
 };
 struct peripheral {
   QString             name;
@@ -140,7 +141,7 @@ public:
   ~SWRAP() { if (data) free (data); };
   operator char const * () const {return data;};
   void operator= (const QString & s) {
-    if (data) free (data); data = 0;
+    if (data) {free (data); data = 0;}
     data = strdup(s.toLatin1().constData());};
 private:
   char * data;

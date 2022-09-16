@@ -197,7 +197,8 @@ void IOreg::meth (QString & out, const group * parent, const unsigned int id) co
     mn.sprintf("%s(): %s(0x%08lXu) {};\n", (char const *) wdef, val_str, reset);
     strreg += indent(id) + mn;
     if (access == READ_WRITE) {
-      mn.sprintf("void modify  (%s (*f) (%s & r)) volatile {\n", ref_width(size), (char const *) wdef);
+//    mn.sprintf("void modify  (%s (*f) (%s & r)) volatile {\n", ref_width(size), (char const *) wdef);
+      mn.sprintf("template<typename F> void modify (F f) volatile {\n");  // nejde kvuli kompatibilite s C
       strreg += indent(id) + mn;
       mn.sprintf("%s t; t.%s = %s;\n", (char const *) wdef, val_str, val_str);
       strreg += indent(id+2) + mn;
@@ -206,7 +207,8 @@ void IOreg::meth (QString & out, const group * parent, const unsigned int id) co
       strreg += indent(id) + "}\n";
     }
     if (access & WRITE_ONLY) {
-      mn.sprintf("void setbits (%s (*f) (%s & r)) volatile {\n", ref_width(size), (char const *) wdef);
+//    mn.sprintf("void setbits (%s (*f) (%s & r)) volatile {\n", ref_width(size), (char const *) wdef);
+      mn.sprintf("template<typename F> void setbits (F f) volatile {\n");  // nejde kvuli kompatibilite s C
       strreg += indent(id) + mn;
       mn.sprintf("%s t;\n", (char const *) wdef);
       strreg += indent(id+2) + mn;
@@ -219,9 +221,14 @@ void IOreg::meth (QString & out, const group * parent, const unsigned int id) co
   
   out += strreg;
 }
-
+bool group::not_used () const {
+  //if (name == "USB") return true;
+  //if (name == "CAN") return true;
+  return false;
+}
 void group::dump (QString& out, const unsigned int id) const {
-  if (system) return;
+  if (system)     return;
+  if (not_used()) return;
   int n;
   QString end;
   end.sprintf("; /* W=%ld=0x%lX */\n", size, size);
@@ -232,6 +239,7 @@ void group::dump (QString& out, const unsigned int id) const {
 }
 void group::defs (QString& out, const unsigned int id) const {
   if (system) return;
+  if (not_used()) return;
   for (int n=0; n<registers.size(); n++) registers[n].defs(out, this, id);
 }
 

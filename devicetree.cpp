@@ -413,7 +413,7 @@ void DeviceTree::write (QIODevice * d) {
   out += "#ifndef " + name + "\n";
   out += "#define " + name + "\n";
   out += "#include <stdint.h>\n\n";
-  out += "#ifdef __cplusplus\nextern \"C\" {\n#endif // __cplusplus\n\n";
+  // out += "#ifdef __cplusplus\nextern \"C\" {\n#endif // __cplusplus\n\n";
   out += "#define __RO volatile const\n";
   out += "#define __WO volatile\n";
   out += "#define __RW volatile\n";
@@ -421,7 +421,7 @@ void DeviceTree::write (QIODevice * d) {
   out += "#define __WOB\n";
   out += "#define __RWB\n\n";
   dev.dump(out);
-  out += "\n#ifdef __cplusplus\n};\n#endif // __cplusplus\n";
+  // out += "\n#ifdef __cplusplus\n};\n#endif // __cplusplus\n";
   out += "#endif // " + name + "\n";
   test (out);
   stream << out;
