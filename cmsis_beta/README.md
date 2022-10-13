@@ -1,4 +1,4 @@
-# SVD Viewwer BETA
+# SVD Viewer BETA
 
 ## Generátor hlaviček
 Původní Qt program byl udělán ad hoc. Tento pokus je o něco sofistikovanější,

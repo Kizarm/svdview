@@ -40,6 +40,9 @@ Celé je to uděláno v Qt ve verzi 4.x, Qt5 jsem netestoval, ale taky by neměl
 Pro testy je potřeba arm-none-eabi-gcc/g++, testováno s verzí 6.3.1, g++ musí umět rozšíření C++14.
 Všechny Makefile jsou psány pro Linux, ve Win s tím budou potíže (příkazy rm, mv, wget ...).
 
+10.2022 - do adresáře cmsis_beta jsem přidal samostatný projekt primárně pro clang, ale funguje
+i pro gcc/g++. Není závislý na Qt (a na ničem v hlavním adresáři), používá jen STL.
+
 Tento program je rozšiřován v naději, že bude užitečný, avšak BEZ JAKÉKOLIV ZÁRUKY. Neposkytují se ani odvozené záruky
 PRODEJNOSTI anebo VHODNOSTI PRO URČITÝ ÚČEL. Další podrobnosti hledejte v Obecné veřejné licenci GNU (http://www.gnugpl.cz/).
 
