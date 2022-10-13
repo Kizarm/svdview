@@ -301,13 +301,13 @@ void RegisterPart::convert(const registerType * r) {
   width = rw ? type_from_long (rw) : defw;
   // if (width != TYPE_32BIT) printf("%s: width=%d\n", name.c_str(), (int) width);
   if (r->dim.base) {                                      // pokud je specifikovano
-    if (r->dimIncrement.base != width) {
+    const unsigned long increment = r->dimIncrement.base; // pak musi byt i toto
+    if (increment != width) {
       // Tady je problém např. Freescale - netuším, jak je to myšleno, ale nezapadá to
       // do koncepce C-čkové hlavičky. Je to nějak divně překrýváno.
-      CERR << "register array " << baseName << " increment logic error\n";
+      CERR << "register array " << baseName << " increment logic error (" << increment << " != " << width << ")\n";
     }
-    const unsigned long increment = r->dimIncrement.base; // pak musi byt i toto
-    size  = r->dim.base * increment / width;
+    size  = r->dim.base;
     evalStrings (name, baseName, r);
   }
   // printf("register: (%d) %s\n", access, name.c_str());
