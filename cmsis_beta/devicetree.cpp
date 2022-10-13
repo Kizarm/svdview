@@ -333,7 +333,7 @@ void RegisterPart::fillGaps() {
   vector<FieldPart> copy;
   unsigned long ofset = 0ul, gapn = 0lu;
   for (auto & f: fields) {
-    if (ofset < f.address) {    // mezera, vyplnit
+    if (ofset < f.address) {          // mezera, vyplnit
       const unsigned long gap = f.address - ofset;
       // printf("gap  (%ld) %s\n", gap, f.name.c_str());
       FieldPart nf (root);
@@ -343,9 +343,16 @@ void RegisterPart::fillGaps() {
       nf.access  = 0;
       nf.name    = cprintf("UNUSED%ld", gapn++);
       copy.push_back (nf);
+      copy.push_back (f);
+      ofset = f.address + f.size;
+    } else if (ofset > f.address) {   // překryv, ignorovat, nic jiného s tím neudělám
+                                      // union by asi byl zbytečný
+      //printf("%s: ofs=%ld, adr=%ld\n", f.name.c_str(), ofset, f.address);
+      CERR << "Register: " << name << " ignore field " << f.name << ", override\n";
+    } else {                          // ok, navazuje
+      copy.push_back (f);
+      ofset = f.address + f.size;
     }
-    copy.push_back (f);
-    ofset = f.address + f.size;
   }
   fields.clear();
   for (auto & e: copy) fields.push_back (e);
