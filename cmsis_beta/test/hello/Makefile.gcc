@@ -1,0 +1,18 @@
+# Use gcc / binutils toolchain
+PREFIX = arm-none-eabi-
+CC = $(PREFIX)gcc
+CX = $(PREFIX)g++
+# linker je ld
+LD   = $(PREFIX)g++
+SIZE = $(PREFIX)size
+DUMP = $(PREFIX)objdump
+COPY = $(PREFIX)objcopy
+DEL  = rm -f
+
+CFLAGS+= -Os
+CFLAGS+= $(MCPU)
+LFLAGS+= $(MCPU)
+LFLAGS+= -nostartfiles -nostdlib
+LDLIBS+= -lgcc -lc
+
+

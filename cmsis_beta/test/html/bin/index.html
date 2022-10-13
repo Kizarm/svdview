@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8"></META>
+    <title>DEVICE</title>
+    <style>
+      body {background-color: rgb(192,255,255); }
+      h2   {color: rgb(64,0,192); font-size: 18px;}
+      b    {color: rgb(64,0,192);}
+      tr, td { border: 1px solid black; border-collapse: collapse; }
+      table  { width:auto; border: 2px solid blue;  border-collapse: collapse; text-align: center; }
+      .regs  { table-layout: fixed ; width: 190%; border: 1px solid black; border-collapse: collapse; text-align: center; }
+      .err   { text-align: left; color: rgb(255,0,0); }
+      .res   { resize: both; overflow: auto; height: 600px; margin: 0px; padding: 0px; border: 1px solid black; display:block; }
+      .un { overflow: hidden; background-color: rgb(255,255,255); }
+      .ro { overflow: hidden; background-color: rgb(136,255, 93); }
+      .wo { overflow: hidden; background-color: rgb(255,132,124); }
+      .rw { overflow: hidden; background-color: rgb(255,255,124); }
+      .gr { background-color: rgb(124,255,224); }
+  </style>
+  </head>
+  <body>
+  <script src="cmsis.js"></script>
+  <script src="index.js"></script>
+  <table>
+    <tr>
+      <td><div class="res" id="peripherals" width="150px"></div></td>
+      <td><div class="res" id="registers"><div></td>
+    </tr>
+    <tr>
+      <td><input id="convert" type="button" value="Convert" onclick="OnClickUpl();" disabled="true"/></td>
+      <td id="fields">Description</td>
+    </tr>
+  </table>
+  <h2>SVD (System View Description) Viewer.</h2>
+  <p>Aplikace, která asi nebude nikdy dokončena. Prvotním úkolem bylo ze SVD souboru vygenerovat C++ hlavičku,
+  protože ty které mívají výrobci jsou každá pes jiná ves, jsou určené pro čisté C a z mnohých důvodů mi prostě
+  nevyhovovaly. Nejprve vznikla aplikace v Qt (2017), která sice něco dělala, ale postupem času se ukázalo, že to
+  nejde dělat ad hoc, pro soubory SVD existuje ARM standard CMSIS, takže jako druhý pokus jsem začal psát
+  kostru programu, která už není závislá na externích knihovnách, stačí C++ STL. Mimo jiné i pro to, aby to
+  šlo použít v emscripten, tedy pro web. Dále jsem zvolil vícefázový postup parsování SVD souboru, dělat to celé
+  najednou je cesta do pekel. V první fázi se XML formát zkonvertuje do stromu, který je poněkud lépe zpracovatelný,
+  protože použitá knihovna tinyXml je sice jednoduchá, ale prochází jednotlivé prvky poněkud podivně. Ve druhé
+  fázi se prvky XML převedou podle standardu CMSIS, což je nejsložitější část práce, která zdaleka není hotova.
+  Zatím nepotřebuji parsovat CPU a neumím rozebrat prvky typu cluster, jsou složitě strukturované. Sice je někteří
+  výrobci používají, ale zřejmě jen pro velmi složité prvky, normální čipy s jádrem Cortex-Mx tohle nemívají.
+  V průběhu převodu se provádějí kontroly standardu - používají se regulární výrazy i výčty, poměrně dloho to trvá.
+  V další fázi se provede poslední převod na strukturu popisující paměť čipu v hierarchii
+  Device &#8594; Peripheral &#8594; Register &#8594; Field &#8594; Enumeration. To pak lze vypsat v libovolném
+  tvaru zděděnou třídou, která má přístup k datům (friend). Bohužel výrobci k tomu přistupují zřejmě velmi laxně,
+  takže třeba některé prvky ve skupině mají stejná jména (typicky NXP), takže tato jména nejdou v C/C++ hlavičkovém
+  souboru použít. Takových problémů je tam spousta, takže tohle nemůže být nikdy úplně hotové a funkční pro jakýkoli
+  SVD soubor.
+  </p>
+  <p>HTML verze - viz shora - celkem zachovává popis, tak jak ho výrobce vytvořil. Kdyby do toho výrobci dali
+  poněkud více komentářů (v tom je zase NXP z těch lepších, STM horší), bylo by to něco jako RM. Nicméně
+  výpis registrů mi připadá přehlednější, barevné značení přístupu je
+  </p>
+  <p><table>
+    <tr><td colspan="4">Color description</td></tr>
+    <tr>
+    <td class="un">UNACCESSED</td>
+    <td class="ro">READ ONLY</td>
+    <td class="wo">WRITE ONLY</td>
+    <td class="rw">READ WRITE</td>
+    </tr>
+  </table></p>
+  <p>A všechna barevná pole jsou klikací, takže pokud na ně klikneme myší, zobrazí se bližší popis (pokud existuje).
+  Já moc neumím formátovat webové stránky, takže tohle běží na Firefoxu, co to udělá jinde, netuším, ale vrtat se
+  v tom už nebudu. Tabulka registrů je 32-bitová, samo sebou se na stránku nevejde a oproti zvyklostem se bity
+  zobrazují zleva od nuly. Připadá mi to přirozenější, většina informace je v nižších bitech - a ty jsou viditelné
+  bez posuvu. Je to výsledek kompromisu - pole tabulky je lépe mít ekvidistantní, ale zase se tam nevejdou celé
+  názvy, protože některé jsou příšerně dlouhé. Přitom na to lze kliknout a to už se zobrazí celé.
+  </p>Jako vzorek, který se zobrazí defaultně je použit soubor
+  <a href="https://github.com/posborne/cmsis-svd/tree/master/data/ARM_SAMPLE" target="_blank">ARM_Sample.svd</a>.
+  Zde je veliká sbírka SVD popisů různých výrobců i když je většinou možné soubor získat přímo od výrobce.
+  Bývají umístěny dost nelogicky - např. STM je (dnes, 10.10.2022) má někde pod CAD Resources.
+  <p>Tím malým tlačítkem Convert lze vyvolat dialog, který umožní podstrčit do programu lokální soubor, ten
+  se pak okamžitě převede (pokud se to povede). Původní záměr byl nechat v této webové aplikaci i generátor
+  C++ hlaviček. Ne, že by to nešlo, ale připadá mi to zbytečné. Kdo má zájem to použít, stáhne si zdrojáky
+  a přeloží si to jako nativní aplikaci. Ostatně generovaná hlavička má své mouchy a ne každému bude vyhovovat.
+    <ul>
+    <li>1. Hlavička je určena striktně pro C++, obsahuje i šablony pro lambda výrazy, kterými lze nastavovat skupiny bitů
+           metodou read, modify, write.
+    <li>2. Z tohoto důvodu není kompatibilní s CMSIS knihovnou od ARM, která se používá na systémové periferie.
+           Ono tohle jde těžko udělat správně. Někdy v SVD popisu systémové periferie jako je NVIC jsou, někdy ne.
+           To platí i pro definice přerušení, systémové se musí doplnit a pro každé jádro je to jinak.
+    <li>3. Zvolil jsem poněkud nešťastně výpis ve kterém deklarace registru (instancování) hned následuje jeho definici.
+           Připadalo mi to tak nějak přirozenější, vše je na jednom místě a ne roztahané všude možně po velkém
+           souboru. Je to ale naprosto nečitelné. Sice to tak moc nevadí, dnešní IDE vám ukáže přesně na místo
+           deklarace i definice, ale je to jistý nezvyk.
+    </ul>
+  </p>
+  <p>Celé je to popsáno <a href="https://www.keil.com/pack/doc/CMSIS/SVD/html/index.html" target="_blank">zde</a>.
+  Mají tam i podobnou aplikaci SVDConv, je to mnohem rozsáhlejší systém než tento hobby projekt, ale jen pro Windows.
+  Zde není cílem to napodobit, ale udělat si to po svém. A naučit se něco nového.
+  </p>
+  </body>
+</html>

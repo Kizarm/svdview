@@ -1,0 +1,11 @@
+--- ./old/STM32F0x1.svd	2017-09-27 10:31:06.000000000 +0200
++++ ./new/STM32F0x1.svd	2022-10-07 17:25:00.000000000 +0200
+@@ -16598,7 +16598,7 @@
+               <name>RAM_PARITY_CHECK</name>
+               <description>RAM_PARITY_CHECK</description>
+               <bitOffset>14</bitOffset>
+-              <bitWidth>0</bitWidth>
++              <bitWidth>1</bitWidth>
+             </field>
+             <field>
+               <name>BOOT_SEL</name>

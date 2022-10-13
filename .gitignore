@@ -2,9 +2,9 @@
 .kde*
 *.kdev4
 # generated files
-Makefile
 moc/
 obj/
+standalone/
 qrc_view.cpp
 svdview
 .qmake.stash
