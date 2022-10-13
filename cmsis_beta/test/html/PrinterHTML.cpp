@@ -12,7 +12,7 @@ void PrinterHTML::fillFieldGaps() {
     //pp.checkNames();
     for (auto & rr: pp.registers) {
       //rr.checkNames();
-      fillFieldGaps (rr.fields);
+      fillFieldGaps (rr);
       // if (rr.name.empty()) rr.name = rr.baseName;   // původně se tak rozeznávalo, že je to pole
     }
     sort (pp.registers.begin(), pp.registers.end(), [] (RegisterPart & a, RegisterPart & b) {
@@ -23,7 +23,8 @@ void PrinterHTML::fillFieldGaps() {
     return a.name < b.name;                         // tady lépe podle jména
   });
 }
-void PrinterHTML::fillFieldGaps (vector<FieldPart> & fields) {
+void PrinterHTML::fillFieldGaps (RegisterPart & rr) {
+  vector<FieldPart> & fields = rr.fields;
   sort (fields.begin(), fields.end(), [] (FieldPart & a, FieldPart & b) {
     return a.address < b.address;
   });
@@ -44,7 +45,7 @@ void PrinterHTML::fillFieldGaps (vector<FieldPart> & fields) {
     } else if (ofset > f.address) {   // překryv, ignorovat, nic jiného s tím neudělám
                                       // union by asi byl zbytečný
       //printf("%s: ofs=%ld, adr=%ld\n", f.name.c_str(), ofset, f.address);
-      CERR << "Register: " << name << " ignore field " << f.name << ", override\n";
+      CERR << "Register: " << rr.name << " ignore field " << f.name << ", override\n";
     } else {                          // ok, navazuje
       copy.push_back (f);
       ofset = f.address + f.size;

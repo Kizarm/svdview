@@ -14,7 +14,7 @@ class PrinterHTML : public DeviceTree {
     void dumpDescription (std::string & out, const int per, const int reg, const int fie);
     void fillFieldGaps   ();
   protected:
-    void fillFieldGaps   (std::vector<FieldPart> & fld);
+    void fillFieldGaps   (RegisterPart & rr);
     void dumpRegister    (const RegisterPart & r, std::string & out, const int per);
     void dumpField       (const FieldPart    & f, std::string & out, const int per, const int reg);
     void dumpEnums       (std::string & out, const std::vector<EnumValuesPart> & values);
