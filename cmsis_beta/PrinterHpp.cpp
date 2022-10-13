@@ -235,16 +235,16 @@ void PrinterHpp::printEnumerations(RegisterPart & r, string & out) {
     if (f.eenum.values.empty()) continue;
     switch (m_eprt) {
       case DECLARE_ONLY:
-      case OLD_STYLE: out += cprintf("    enum %s /*: %s*/ {\n", f.eenum.name.c_str(), typeNames[f.width]); break;
-      case NEW_STYLE: out += cprintf("    enum %s :   %s   {\n", f.eenum.name.c_str(), typeNames[f.width]); break;
+      case OLD_STYLE: out += cprintf("    enum %s /* %s*/ {\n", f.eenum.name.c_str(), typeNames[f.width]); break;
+      case NEW_STYLE: out += cprintf("    enum %s :  %s   {\n", f.eenum.name.c_str(), typeNames[f.width]); break;
     }
     size_t maxlen = 0u;
-    for (auto & e: f.eenum.values) {
-      string s = cprintf ("%s = %s", e.name.c_str(), e.value.c_str());
+    for (auto & e: f.eenum.values) {    // oprava - e.value musí být číslo - vyskytují se všechny typy cmsis (0x, #)
+      string s = cprintf ("%s = %ld", e.name.c_str(), cmsis_toUlong(e.value));
       if (s.size() > maxlen) maxlen = s.size();
     }
     for (auto & e: f.eenum.values) {
-      string s = cprintf ("%s = %s", e.name.c_str(), e.value.c_str());
+      string s = cprintf ("%s = %ld", e.name.c_str(), cmsis_toUlong(e.value));
       int fill = maxlen - s.size();
       out += cprintf ("      %s,%*s  //!< %s\n", s.c_str(), fill, "", e.comment.c_str());
     }
