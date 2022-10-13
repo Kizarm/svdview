@@ -13,7 +13,7 @@ void PrinterHTML::fillFieldGaps() {
     for (auto & rr: pp.registers) {
       //rr.checkNames();
       fillFieldGaps (rr.fields);
-      if (rr.name.empty()) rr.name = rr.baseName;   // původně se tak rozeznávalo, že je to pole
+      // if (rr.name.empty()) rr.name = rr.baseName;   // původně se tak rozeznávalo, že je to pole
     }
     sort (pp.registers.begin(), pp.registers.end(), [] (RegisterPart & a, RegisterPart & b) {
       return a.address < b.address;                 // podle adresy (ofsetu)
@@ -90,10 +90,8 @@ void PrinterHTML::dumpPeripheral(string & out, const int id) {    // right table
   out += cprintf("</table>\n");
 }
 void PrinterHTML::dumpRegister(const RegisterPart & r, string & out, const int per) {
-  //string mname (r.name);
-  //if (r.name.empty()) mname = r.baseName;
   out += cprintf(" <tr><td%s onclick=\"RegisterDesc(%d,%d);\">%s</td><td>%04lX</td>\n", classes[r.access],
-                 per, r.part_id, r.name.c_str(), r.address);
+                 per, r.part_id, r.baseName.c_str(), r.address);
   for (const auto & f: r.fields) {
     dumpField (f, out, per, r.part_id);
   }
@@ -101,7 +99,6 @@ void PrinterHTML::dumpRegister(const RegisterPart & r, string & out, const int p
 }
 void PrinterHTML::dumpField(const FieldPart & f, string & out, const int per, const int reg) {
   string s;
-  //if (f.name.find ("UNUSED") == string::npos) mname = f.name;
   if (f.size > 1) s = cprintf(" colspan=\"%lu\"", f.size);
   out += cprintf("<td%s%s onclick=\"Field(%d, %d, %d);\">%s</td>\n", s.c_str(), classes[f.access],
                  per, reg, f.part_id, f.name.c_str());
@@ -112,7 +109,15 @@ void PrinterHTML::dumpDescription(string & out, const int per, const int reg) { 
   
   out += "<div align=\"left\">\n";
   out += cprintf("<p>Register: <b>%s</b>&nbsp; Offset: 0x%04lx bytes, size = %ld of elements width %d bits</p>\n",
-                 rr.name.c_str(), rr.address, rr.size, rr.width << 3);
+                 rr.baseName.c_str(), rr.address, rr.size, rr.width << 3);
+  if (!rr.name.empty()) {
+    string cp;
+    for (const char c: rr.name) {
+      cp += c;
+      if (c == ',') cp += ' ';      // nejsou tam mezery, doplň je
+    }
+    out += cprintf("<p> eval : %s</p>\n", cp.c_str());
+  }
   out += cprintf("<p><i>%s</i></p>\n", rr.comment.c_str());
   out += "</div>\n";
 }

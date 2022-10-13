@@ -8,7 +8,7 @@ using namespace std;
 static void evalStrings (string & name, string & baseName, const dimElementGroup * group) {
   size_t n = name.find_first_of ("%[");
   baseName = name.substr (0, n);
-  if (name.find_first_of ("[]")) {  // Atmel - v závorkách to nemá být, vytvoříme jen pole
+  if (name.find_first_of ("[]") != string::npos) {  // Atmel - v závorkách to nemá být, vytvoříme jen pole
     name = ""; return;
   }
   if (group->dimIndex.base.empty()) {
@@ -47,7 +47,7 @@ static void evalStrings (string & name, string & baseName, const dimElementGroup
   }
   res  = res.substr (0, res.size() - 1u);
   name = res;
-  //printf("res=%s\n", name.c_str());
+  // printf("res=%s\n", name.c_str());
 }
 static void reg_rename (RegisterPart & r, char & c) {
   string s (r.baseName);
@@ -301,6 +301,11 @@ void RegisterPart::convert(const registerType * r) {
   width = rw ? type_from_long (rw) : defw;
   // if (width != TYPE_32BIT) printf("%s: width=%d\n", name.c_str(), (int) width);
   if (r->dim.base) {                                      // pokud je specifikovano
+    if (r->dimIncrement.base != width) {
+      // Tady je problém např. Freescale - netuším, jak je to myšleno, ale nezapadá to
+      // do koncepce C-čkové hlavičky. Je to nějak divně překrýváno.
+      CERR << "register array " << baseName << " increment logic error\n";
+    }
     const unsigned long increment = r->dimIncrement.base; // pak musi byt i toto
     size  = r->dim.base * increment / width;
     evalStrings (name, baseName, r);
