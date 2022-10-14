@@ -150,8 +150,8 @@ void PeripheralPart::convert(const peripheralType * p) {
   auto & vr = p->registers._register;
   for (auto & r: vr) {
     RegisterPart nr(root);
-    nr.convert (r);
-    registers.push_back (nr);
+    bool res = nr.convert (r);
+    if (res) registers.push_back (nr);
   }  
   for (auto & e: p->interrupt) {
     InterruptPart ip;
@@ -173,6 +173,12 @@ void PeripheralPart::checkNames() {
   sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
     return a.baseName < b.baseName;
   });
+  for (auto & rr: registers) {
+    if (rr.baseName == name) {
+      CERR << "register name " << rr.baseName << " equal to parent peripheral name - append _R\n";
+      rr.baseName += "_R";
+    }
+  }
   vector<RegisterPart> copy;
   string obn;
   char index = 'A';
@@ -212,6 +218,24 @@ void RegisterPart::checkNames() {
   fields.clear();
   for (auto & r: copy) fields.push_back (r);
 }
+void RegisterPart::structutalize_union() {
+  bool ok = true;
+  for (auto & r: reg_union) {
+    if (r.address != address) {
+      ok = false; break;
+    }
+    if (r.size * r.width != size * width) {
+      ok = false; break;
+    }
+  }
+  if (ok) return;
+  // TODO strange overlays
+  reg_union.clear();        // prozatímní řešení
+  /* Takhle to asi už zůstane, někde je to překrývání opravdu dost divné,
+   * a většinou není vůbec potřeba. */
+  CERR << "register " << name << " has a more complicated union\n";
+}
+
 void FieldPart::checkNames() {
   if (eenum.values.empty()) return;
   // Heuristika, obcházející chybu v popisu NXP.
@@ -242,7 +266,7 @@ void FieldPart::checkNames() {
 void PeripheralPart::fillGaps() {
   // sekundární třídění podle délky je nutné, jinak se může vyplnit blbě
   sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
-    return a.size < b.size;
+    return a.size * a.width < b.size * b.width;
   });
   sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
     return a.address < b.address;
@@ -271,21 +295,53 @@ void PeripheralPart::fillGaps() {
   registers.clear();
   for (auto & r: copy) registers.push_back (r);
 }
+class AdrFrame {
+  unsigned long begin, end;
+  public:
+    explicit AdrFrame (const RegisterPart & r) noexcept {
+      begin = r.address;
+      end   = r.address + r.size * r.width;
+    }
+    bool is_in (const RegisterPart & r) {
+      if (r.address < begin) return false;
+      if (r.address >=  end) return false;
+      const unsigned long e = r.address + r.size * r.width;
+      if (e <= begin) return false;
+      if (e  > end  ) return false;
+      return true;
+    }
+};
 unsigned long PeripheralPart::makeUnion() {
+  sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
+    return a.size * a.width > b.size * b.width;
+  });
+  sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
+    return a.address < b.address;
+  });
   vector<RegisterPart> copy;
   unsigned long ofset = 0ul;
   for (auto & r: registers) {
     if (ofset > r.address) {   // same
       auto & last = copy.back();
-      last.reg_union.push_back (r);
-    } else copy.push_back (r);
-    ofset = r.address + r.width * r.size;
+      AdrFrame af (last);
+      if (af.is_in (r)) {
+        last.reg_union.push_back (r);
+      } else {
+        CERR << "register (part) " << r.name << " is out of union\n";
+      }
+    } else {
+      copy.push_back (r);
+      ofset = r.address + r.width * r.size;
+    }
   }
   registers.clear();
   for (auto & r: copy) registers.push_back (r);
+  for (auto & r: registers) {
+    if (r.reg_union.size()) r.structutalize_union();
+  }
   return ofset;
 }
-void RegisterPart::convert(const registerType * r) {
+bool RegisterPart::convert(const registerType * r) {
   TYPES_WITH defw = root ? root->width : TYPE_32BIT;
   address  = r->addressOffset.base;                      // offset in bytes
   comment  = strip_wc (r->description.base);
@@ -305,7 +361,8 @@ void RegisterPart::convert(const registerType * r) {
     if (increment != width) {
       // Tady je problém např. Freescale - netuším, jak je to myšleno, ale nezapadá to
       // do koncepce C-čkové hlavičky. Je to nějak divně překrýváno.
-      CERR << "register array " << baseName << " increment logic error (" << increment << " != " << width << ")\n";
+      // CERR << "register array " << baseName << " increment logic error (" << increment << " != " << width << ")\n";
+      return false;
     }
     size  = r->dim.base;
     evalStrings (name, baseName, r);
@@ -318,6 +375,7 @@ void RegisterPart::convert(const registerType * r) {
     fp.convert (*this, e);
     fields.push_back (fp);
   }
+  return true;
 }
 void RegisterPart::validate() {
   for (auto & f: fields) f.validate();

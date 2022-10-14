@@ -61,10 +61,11 @@ struct RegisterPart : public MandatoryPart {
   explicit RegisterPart (DeviceTree * p) noexcept : MandatoryPart(p), 
            fields(), reg_union(), baseName(), access(0u), resetMask(0ul), resetValue(0xFFFFFFFFul) {};
   virtual ~RegisterPart () {};
-  void convert (const registerType * r);
+  bool convert (const registerType * r);
   void validate   ();
   void checkNames ();
   void fillGaps   ();
+  void structutalize_union ();
 };
 struct InterruptPartC {
   const char * name;
@@ -93,7 +94,7 @@ struct PeripheralPart : public MandatoryPart {
   void convert    (const peripheralType * p);
   void checkNames ();
   void fillGaps   ();
-  unsigned long makeUnion ();
+  unsigned long makeUnion  ();
 };
 class PRINTER;
 /**

@@ -153,6 +153,7 @@ void PrinterHpp::printRegisters(PeripheralPart & p, string & out) {
     if (len > maxlen) maxlen = len;
   }
   for (auto & r: p.registers) {
+    //if (r.reg_union.size() > 1ul) r.structutalize_union();
     if (r.fields.size() > 0u) {
       printRegDef  (r, out, maxlen);
       printRegInst (r, out, maxlen);
@@ -205,7 +206,7 @@ void PrinterHpp::printRegDef(RegisterPart & r, string & out, const int indent) {
   out += cprintf("    } B;\n");
   const char * type_name = typeNames [r.width];
   out += cprintf("  %s %s R;\n", accessStrings[r.access], type_name);
-  printMethods (regdef, r.access, r.resetValue, out);
+  if (r.width == TYPE_32BIT) printMethods (regdef, r.access, r.resetValue, out);
   out += cprintf("  };\n");
   if (r.reg_union.empty()) return;
   for (auto & e: r.reg_union) printRegDef (e, out, indent);
@@ -227,7 +228,7 @@ void PrinterHpp::printRegSimple(RegisterPart & r, string & out, const int indent
   if (r.size > 1ul) {
     fs = cprintf("[%ld]", r.size);
   }
-  out += cprintf("%s %s %s %s;  //!< register definition\n\n", accessStrings[r.access],
+  out += cprintf("%s %s %s %s;  //!< register definition\n", accessStrings[r.access],
                  regdef.c_str(), reg.c_str(), fs.c_str()); // pokud je to pole, zde
 }
 void PrinterHpp::printEnumerations(RegisterPart & r, string & out) {
