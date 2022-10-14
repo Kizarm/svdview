@@ -72,7 +72,11 @@ void setXml (const std:: string & xml) {
   std::cout << "device converted OK.\n";
 }
 std::string PrintERR () {
-  std::string result, s (CERR.str());
+  std::string result, s , nl (CERR.str());
+  for (const char c: nl) {
+    if (c == '\n') s += "<br>";
+    else           s += c;
+  }
   result += "<p class=\"err\">";
   if (s.empty()) result += "OK";
   else           result += s;
