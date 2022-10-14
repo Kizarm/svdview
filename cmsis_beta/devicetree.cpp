@@ -346,10 +346,11 @@ void RegisterPart::fillGaps() {
       copy.push_back (nf);
       copy.push_back (f);
       ofset = f.address + f.size;
-    } else if (ofset > f.address) {   // překryv, ignorovat, nic jiného s tím neudělám
-                                      // union by asi byl zbytečný
+    } else if (ofset > f.address) {   // překryv, dát do předchozího jako union
       //printf("%s: ofs=%ld, adr=%ld\n", f.name.c_str(), ofset, f.address);
-      CERR << "Register: " << name << " ignore field " << f.name << ", override\n";
+      auto & last = copy.back();
+      last.fld_union.push_back (f);
+      // CERR << "Register: " << name << ", field " << last.name << " has override " << f.name << "\n";
     } else {                          // ok, navazuje
       copy.push_back (f);
       ofset = f.address + f.size;

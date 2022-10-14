@@ -42,9 +42,10 @@ struct EnumPart {
 };
 struct RegisterPart;
 struct FieldPart : public MandatoryPart {   // width je zde bit, ale používá se hodnota zděděná z registru
-  unsigned              access;
-  EnumPart              eenum;
-  explicit FieldPart (DeviceTree * p) noexcept : MandatoryPart(p), access(0u), eenum() {};
+  unsigned                access;
+  EnumPart                eenum;
+  std::vector<FieldPart>  fld_union;
+  explicit FieldPart (DeviceTree * p) noexcept : MandatoryPart(p), access(0u), eenum(), fld_union() {};
   virtual ~FieldPart () {};
   void convert (RegisterPart & p, fieldType & f);
   void validate   ();

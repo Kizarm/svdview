@@ -103,6 +103,13 @@ void PrinterHTML::dumpDescription(string & out, const int per, const int reg, co
   out += "<div align=\"left\">\n";
   out += cprintf("<p>Field: <b>%s</b>&nbsp; Offset: %ld bits, size = %ld bits</p>\n",
                  ff.name.c_str(), ff.address, ff.size);
+  if (!ff.fld_union.empty()) {
+    out += "<p>has overrides (unknown use):</p>\n";
+    for (auto ovr: ff.fld_union) {
+      out += cprintf("<p><b>%s</b>&nbsp; Offset: %ld bits, size = %ld bits &nbsp; <i>%s</i></p>\n",
+                    ovr.name.c_str(), ovr.address, ovr.size, ovr.comment.c_str());
+    }
+  }
   out += cprintf("<p><i>%s</i></p>\n", ff.comment.c_str());
   out += "</div>\n";
   if (ff.eenum.values.empty()) return;
