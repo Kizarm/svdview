@@ -12,8 +12,7 @@ void PrinterHTML::fillFieldGaps() {
     //pp.checkNames();
     for (auto & rr: pp.registers) {
       //rr.checkNames();
-      fillFieldGaps (rr);
-      // if (rr.name.empty()) rr.name = rr.baseName;   // původně se tak rozeznávalo, že je to pole
+      rr.fillGaps ();
     }
     sort (pp.registers.begin(), pp.registers.end(), [] (RegisterPart & a, RegisterPart & b) {
       return a.address < b.address;                 // podle adresy (ofsetu)
@@ -22,37 +21,6 @@ void PrinterHTML::fillFieldGaps() {
   sort (peripherals.begin(), peripherals.end(), [] (PeripheralPart & a, PeripheralPart & b) {
     return a.name < b.name;                         // tady lépe podle jména
   });
-}
-void PrinterHTML::fillFieldGaps (RegisterPart & rr) {
-  vector<FieldPart> & fields = rr.fields;
-  sort (fields.begin(), fields.end(), [] (FieldPart & a, FieldPart & b) {
-    return a.address < b.address;
-  });
-  vector<FieldPart> copy;
-  unsigned long ofset = 0ul;
-  for (auto & f: fields) {
-    if (ofset < f.address) {          // mezera, vyplnit
-      const unsigned long gap = f.address - ofset;
-      // printf("gap  (%ld) %s\n", gap, f.name.c_str());
-      FieldPart nf (root);
-      nf.width   = f.width;
-      nf.size    = gap;
-      nf.address = ofset;
-      nf.access  = 0;
-      copy.push_back (nf);
-      copy.push_back (f);
-      ofset = f.address + f.size;
-    } else if (ofset > f.address) {   // překryv, ignorovat, nic jiného s tím neudělám
-                                      // union by asi byl zbytečný
-      //printf("%s: ofs=%ld, adr=%ld\n", f.name.c_str(), ofset, f.address);
-      CERR << "Register: " << rr.name << " ignore field " << f.name << ", override\n";
-    } else {                          // ok, navazuje
-      copy.push_back (f);
-      ofset = f.address + f.size;
-    }
-  }
-  fields.clear();
-  for (auto & e: copy) fields.push_back (e);
 }
 
 void PrinterHTML::dumpPeripherals(string & out) {                 // left table
@@ -102,10 +70,11 @@ void PrinterHTML::dumpRegister(const RegisterPart & r, string & out, const int p
   out += cprintf("</tr>\n");
 }
 void PrinterHTML::dumpField(const FieldPart & f, string & out, const int per, const int reg) {
-  string s;
+  string s, nm;
+  if (!f.unused) nm = f.name;
   if (f.size > 1) s = cprintf(" colspan=\"%lu\"", f.size);
   out += cprintf("<td%s%s onclick=\"Field(%d, %d, %d);\">%s</td>\n", s.c_str(), classes[f.access],
-                 per, reg, f.part_id, f.name.c_str());
+                 per, reg, f.part_id, nm.c_str());
 }
 void PrinterHTML::dumpDescription(string & out, const int per, const int reg) { // Register
   const PeripheralPart & pp = peripherals  [per];

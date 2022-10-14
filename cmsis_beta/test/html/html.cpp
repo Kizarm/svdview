@@ -77,7 +77,7 @@ std::string PrintERR () {
   if (s.empty()) result += "OK";
   else           result += s;
   result += "</p>\n";
-  CERR.clear();
+  CERR.str(std::string()); // clear CERR
   return result;
 }
 std::string fromString () {

@@ -19,8 +19,9 @@ struct MandatoryPart {
   unsigned long address;  // adresa, resp. offset, value
   TYPES_WITH    width;    // délka prvku
   unsigned long size;     // počet prvků s délkou width (>1 = pole)
+  bool          unused;   // true pokud se nepoužívá - není v popisu XML
   explicit MandatoryPart (DeviceTree * p) noexcept : root(p), part_id(0),
-           name(), comment(), address(0lu), width(TYPE_BIT), size(0lu) {};
+           name(), comment(), address(0lu), width(TYPE_BIT), size(0lu), unused(false) {};
   virtual ~MandatoryPart () {};
 };
 struct EnumValuesPart {

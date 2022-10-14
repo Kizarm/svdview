@@ -12,6 +12,10 @@ cmsis_beta/build/
 cmsis_beta/cmsis
 cmsis_beta/test/hello/STM32F0x1.h
 cmsis_beta/test/hello/STM32F0x1_startup.c
+cmsis_beta/test/html/bin/cmsis.js
+cmsis_beta/test/html/bin/cmsis.wasm
+cmsis_beta/test/html/bld/
+
 #tohle lovit v kalnych vodach internetu neni dobry napad
 #tests/f4Disco/STM32F40x.svd
 tests/f4Disco/inc/stm32f40x.h

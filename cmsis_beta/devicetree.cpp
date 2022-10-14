@@ -341,6 +341,7 @@ void RegisterPart::fillGaps() {
       nf.size    = gap;
       nf.address = ofset;
       nf.access  = 0;
+      nf.unused  = true;
       nf.name    = cprintf("UNUSED%ld", gapn++);
       copy.push_back (nf);
       copy.push_back (f);
