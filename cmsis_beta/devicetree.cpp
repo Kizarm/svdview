@@ -66,7 +66,7 @@ static void enum_rename (EnumValuesPart & r, char & c) {
 }
 //////////////////////////////////////////////
 DeviceTree::DeviceTree (const CmsisTree & p) noexcept : MandatoryPart(this),
-             cmsis(p), peripherals(), headerName() {
+             cmsis(p), cpu(), peripherals(), headerName() {
 };
 static TYPES_WITH type_from_long (const unsigned long size) {
   TYPES_WITH res = TYPE_32BIT;
@@ -81,6 +81,20 @@ static TYPES_WITH type_from_long (const unsigned long size) {
     CERR << "Invalid size " << size << "\n";
   }
   return res;
+}
+void CpuPart::convert(const cpuType * cpu) {
+  /* Bacha - na tyhle údaje v SVD souboru se vůbec
+   * nedá spoléhat, pokud tam vůbec jsou. */
+  name                = cpu->name.base;
+  revision            = cpu->revision.base;
+  endian              = cpu->endian.base;
+  nvicPrioBits        = cpu->nvicPrioBits.base;
+  mpuPresent          = cpu->mpuPresent.value;
+  fpuPresent          = cpu->fpuPresent.value;
+  vendorSystickConfig = cpu->vendorSystickConfig.value;
+  if (cpu->endian.order == 2u) {
+    CERR << "WARNING : CPU is BIG endian (possible problem)\n";
+  }
 }
 
 void DeviceTree::convert() {
@@ -100,6 +114,7 @@ void DeviceTree::convert() {
     np.convert (p);
     peripherals.push_back (np);
   }
+  cpu.convert (&cmsis.device.cpu);
   vector<InterruptPart> copy;
   for (auto & p: peripherals) {
     for (auto & i: p.interrupts) { 
@@ -165,7 +180,7 @@ void PeripheralPart::validate() {
   for (auto & r: registers) r.validate ();
   checkNames ();
   fillGaps   ();
-  struct_len = makeUnion ();
+  makeUnion  ();
 }
 
 void PeripheralPart::checkNames() {
@@ -311,7 +326,7 @@ class AdrFrame {
       return true;
     }
 };
-unsigned long PeripheralPart::makeUnion() {
+void PeripheralPart::makeUnion() {
   sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
     return a.size * a.width > b.size * b.width;
   });
@@ -334,12 +349,12 @@ unsigned long PeripheralPart::makeUnion() {
       ofset = r.address + r.width * r.size;
     }
   }
+  struct_len = ofset;
   registers.clear();
   for (auto & r: copy) registers.push_back (r);
   for (auto & r: registers) {
     if (r.reg_union.size()) r.structutalize_union();
   }
-  return ofset;
 }
 bool RegisterPart::convert(const registerType * r) {
   TYPES_WITH defw = root ? root->width : TYPE_32BIT;

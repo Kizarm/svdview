@@ -6,6 +6,7 @@ class CmsisTree;
 struct registerType;
 struct peripheralType;
 struct fieldType;
+struct cpuType;
 
 enum TYPES_WITH {
   TYPE_BIT = 0, TYPE_8BIT = 1, TYPE_16BIT = 2, TYPE_32BIT = 4, 
@@ -94,7 +95,20 @@ struct PeripheralPart : public MandatoryPart {
   void convert    (const peripheralType * p);
   void checkNames ();
   void fillGaps   ();
-  unsigned long makeUnion  ();
+  void makeUnion  ();
+};
+struct CpuPart {
+  std::string name;
+  std::string revision;
+  std::string endian;
+  unsigned    nvicPrioBits;
+  bool        mpuPresent;
+  bool        fpuPresent;
+  bool        vendorSystickConfig;
+  explicit CpuPart () noexcept : name(), revision(), endian(),
+                   nvicPrioBits(0u), mpuPresent(false), fpuPresent(false), vendorSystickConfig(false) {}
+  virtual ~CpuPart () {}
+  void convert     (const cpuType * cpu);
 };
 class PRINTER;
 /**
@@ -116,6 +130,7 @@ class PRINTER;
  * */
 class DeviceTree : public MandatoryPart {
   const CmsisTree            & cmsis;
+  CpuPart                      cpu;
   std::vector<PeripheralPart>  peripherals;
   std::vector<InterruptPart>   interrupts;    // vyčištěná kopie z periferií (odstraněné duplicity)
   std::string                  headerName;

@@ -148,24 +148,22 @@ struct registersType {
 };
 //////////////////////////////////////////
 struct cpuType {
-  // TODO : neobsahuje nic uzitecneho, vynechame
-  std::map<std::string,std::string> data;
-  /*
   cpuNameType               name;
   revisionType              revision;
   endianType                endian;
-  bool                      mpuPresent;
-  bool                      fpuPresent;
-  bool                      fpuDP;
-  bool                      dspPresent;
-  bool                      icachePresent;
-  bool                      dcachePresent;
-  bool                      itcmPresent;
-  bool                      dtcmPresent;
-  bool                      vtorPresent;
+  boolPresentType           mpuPresent;
+  boolPresentType           fpuPresent;
+  boolPresentType           fpuDP;
+  boolPresentType           dspPresent;
+  boolPresentType           icachePresent;
+  boolPresentType           dcachePresent;
+  boolPresentType           itcmPresent;
+  boolPresentType           dtcmPresent;
+  boolPresentType           vtorPresent;
   scaledNonNegativeInteger  nvicPrioBits;
-  bool                      vendorSystickConfig;
+  boolPresentType           vendorSystickConfig;
   scaledNonNegativeInteger  deviceNumInterrupts;
+  /*
   scaledNonNegativeInteger  sauNumRegions;
   struct  {
     scaledNonNegativeInteger  base;

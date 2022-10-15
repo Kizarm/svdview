@@ -67,6 +67,7 @@ void PrinterHpp::print(string & out) {
   out += cprintf("/** @brief %s */\n", name.c_str());
   out += cprintf("/* %s */\n", comment.c_str());
   out += preamble;
+  printCpu (out);
   switch (m_eprt) {
     case DECLARE_ONLY:
     case OLD_STYLE:    out += "enum ONE_BIT { RESET = 0, SET = 1 };\n";            break; 
@@ -96,6 +97,22 @@ void PrinterHpp::print(string & out) {
   printInterrupts    (out, 0);
   out += "#endif\n";
 }
+void PrinterHpp::printCpu(string & out) {
+  string cmnt;
+  if (!cpu.name.empty() or !cpu.revision.empty() or !cpu.endian.empty()) {
+    cmnt += "/*\n";
+    if (!cpu.name.empty())     cmnt += cprintf("  cpuName  = %s\n", cpu.name.c_str());
+    if (!cpu.revision.empty()) cmnt += cprintf("  revision = %s\n", cpu.revision.c_str());
+    if (!cpu.endian.empty())   cmnt += cprintf("  endian   = %s\n", cpu.endian.c_str());
+    cmnt += "*/\n";
+  }
+  out += cmnt;
+  out += cprintf("#define __MPU_PRESENT             %s\n", cpu.mpuPresent ? "1" : "0");
+  out += cprintf("#define __NVIC_PRIO_BITS          %d\n", cpu.nvicPrioBits);
+  out += cprintf("#define __Vendor_SysTickConfig    %s\n", cpu.vendorSystickConfig ? "1" : "0");
+  out += cprintf("#define __FPU_PRESENT             %s\n", cpu.fpuPresent ? "1" : "0");
+}
+
 void PrinterHpp::printInterrupts(string & out, const int indent) {
   size_t maxlen = 0u;
   for (auto & i: interrupts) {  // determine maximum lenght of names

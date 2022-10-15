@@ -16,6 +16,7 @@ class PrinterHpp : public DeviceTree {
     void save (const char * name = nullptr) override;
   protected:
     void print (std::string & out);
+    void printCpu              (std::string & out);
     void printInterrupts       (std::string & out, const int indent);
     void printStaticAsserts    (std::string & out, const int indent);
     void printPerpheralAddress (PeripheralPart & p, std::string & out, const int indent);

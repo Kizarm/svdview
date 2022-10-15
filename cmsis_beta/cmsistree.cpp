@@ -82,11 +82,28 @@ void VendorExtensions::parse(const Element * e) {
     data [ch->name] = ch->value;
   }
 }
-void cpuType::parse(const Element * e) {
-//printf(" cpuType::parse: %s=\"%s\"\n", e->name.c_str(), e->value.c_str());
-  for (const Element * ch: e->childs) {
-    data [ch->name] = ch->value;
-  }
+void cpuType::parse(const Element * ch) {
+  //printf(" cpuType::parse: %s=\"%s\"\n", ch->name.c_str(), ch->value.c_str());
+  map<string,function<void()>> cpu_map = {
+  {"name",                [this, ch]() {  name                = ch->value; } },
+  {"revision",            [this, ch]() {  revision            = ch->value; } },
+  {"endian",              [this, ch]() {  endian              = ch->value; } },
+  {"mpuPresent",          [this, ch]() {  mpuPresent          = ch->value; } },
+  {"fpuPresent",          [this, ch]() {  fpuPresent          = ch->value; } },
+  {"fpuDP",               [this, ch]() {  fpuDP               = ch->value; } },
+  {"dspPresent",          [this, ch]() {  dspPresent          = ch->value; } },
+  {"icachePresent",       [this, ch]() {  icachePresent       = ch->value; } },
+  {"dcachePresent",       [this, ch]() {  dcachePresent       = ch->value; } },
+  {"itcmPresent",         [this, ch]() {  itcmPresent         = ch->value; } },
+  {"dtcmPresent",         [this, ch]() {  dtcmPresent         = ch->value; } },
+  {"vtorPresent",         [this, ch]() {  vtorPresent         = ch->value; } },
+  {"nvicPrioBits",        [this, ch]() {  nvicPrioBits        = ch->value; } },
+  {"vendorSystickConfig", [this, ch]() {  vendorSystickConfig = ch->value; } },
+  {"deviceNumInterrupts", [this, ch]() {  deviceNumInterrupts = ch->value; } },
+  };
+  auto f = cpu_map [ch->name];
+  if (f) f ();
+  else  CERR << "! cpuType::parse \"" << ch->name << "\"\n";  
 }
 void peripheralsType::parse(const Element * e) {
 //printf(" peripheralsType::parse: %s\n", e->name.c_str());
