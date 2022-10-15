@@ -179,8 +179,8 @@ void PeripheralPart::convert(const peripheralType * p) {
 void PeripheralPart::validate() {
   for (auto & r: registers) r.validate ();
   checkNames ();
-  fillGaps   ();
   makeUnion  ();
+  fillGaps   ();
 }
 
 void PeripheralPart::checkNames() {
@@ -307,6 +307,7 @@ void PeripheralPart::fillGaps() {
     copy.push_back (r);
     ofset = r.address + r.width * r.size;
   }
+  struct_len = ofset;
   registers.clear();
   for (auto & r: copy) registers.push_back (r);
 }
@@ -349,7 +350,6 @@ void PeripheralPart::makeUnion() {
       ofset = r.address + r.width * r.size;
     }
   }
-  struct_len = ofset;
   registers.clear();
   for (auto & r: copy) registers.push_back (r);
   for (auto & r: registers) {
@@ -376,7 +376,8 @@ bool RegisterPart::convert(const registerType * r) {
     if (increment != width) {
       // Tady je problém např. Freescale - netuším, jak je to myšleno, ale nezapadá to
       // do koncepce C-čkové hlavičky. Je to nějak divně překrýváno.
-      // CERR << "register array " << baseName << " increment logic error (" << increment << " != " << width << ")\n";
+      CERR << "register array " << baseName << " increment logic error at addr " << address 
+           << " (" << increment << " != " << width << ")[dim:" << r->dim.base << "]\n";
       return false;
     }
     size  = r->dim.base;
