@@ -165,8 +165,7 @@ void PeripheralPart::convert(const peripheralType * p) {
   auto & vr = p->registers._register;
   for (auto & r: vr) {
     RegisterPart nr(root);
-    bool res = nr.convert (r);
-    if (res) registers.push_back (nr);
+    nr.convert (registers, r);
   }  
   for (auto & e: p->interrupt) {
     InterruptPart ip;
@@ -198,6 +197,10 @@ void PeripheralPart::checkNames() {
   string obn;
   char index = 'A';
   for (auto & r: registers) {
+    if (r.unused) {
+      copy.push_back (r);
+      continue;
+    }
     if (obn == r.baseName) {
       auto & last = copy.back();
       if (last.baseName == obn) reg_rename (last, index);
@@ -356,8 +359,37 @@ void PeripheralPart::makeUnion() {
     if (r.reg_union.size()) r.structutalize_union();
   }
 }
-bool RegisterPart::convert(const registerType * r) {
+bool RegisterPart::evalArray(vector<RegisterPart> & copy, const registerType * r) {
+  // Tady je problém např. Freescale, ale snad to bude dobře
+  const unsigned long increment = r->dimIncrement.base, dimension = r->dim.base;
+  vector<string> indexes = split_string(r->dimIndex.base, ',');
+  if (indexes.size() != dimension) {
+    CERR << "error " << r->dimIndex.base << "\n";
+    return false;
+  }
+  const size_t pos = baseName.find ("%s");
+  baseName.erase (pos, 2);
+  const fieldsType & vf = r->fields;
+  for (auto e: vf.field) {
+    FieldPart fp (root);
+    fp.convert (*this, e);
+    fields.push_back (fp);
+  }
+  for (unsigned long n=0ul; n<dimension; n++) {
+    RegisterPart nr (*this);
+    nr.address = address + n * increment;
+    const char * fmt = name.c_str();
+    nr.name = cprintf(fmt, indexes[n].c_str());
+    if (n > 0ul) nr.unused = true;
+    copy.push_back (nr);
+  }
+  return true;
+}
+
+bool RegisterPart::convert(vector<RegisterPart> & copy, const registerType * r) {
   TYPES_WITH defw = root ? root->width : TYPE_32BIT;
+  const unsigned long rw = r->size.base >> 3;
+  width = rw ? type_from_long (rw) : defw;
   address  = r->addressOffset.base;                      // offset in bytes
   comment  = strip_wc (r->description.base);
   access   = r->access.order;
@@ -368,20 +400,16 @@ bool RegisterPart::convert(const registerType * r) {
   size     = 1ul;
   resetMask  = r->resetMask.base;
   resetValue = r->resetValue.base;
-  const unsigned long rw = r->size.base >> 3;
-  width = rw ? type_from_long (rw) : defw;
   // if (width != TYPE_32BIT) printf("%s: width=%d\n", name.c_str(), (int) width);
   if (r->dim.base) {                                      // pokud je specifikovano
     const unsigned long increment = r->dimIncrement.base; // pak musi byt i toto
     if (increment != width) {
-      // Tady je problém např. Freescale - netuším, jak je to myšleno, ale nezapadá to
-      // do koncepce C-čkové hlavičky. Je to nějak divně překrýváno.
-      CERR << "register array " << baseName << " increment logic error at addr " << address 
-           << " (" << increment << " != " << width << ")[dim:" << r->dim.base << "]\n";
-      return false;
+      //CERR << "register array " << baseName << " increment logic error at addr " << address 
+      //      << " (" << increment << " != " << width << ")[dim:" << r->dim.base << "]\n";
+      return evalArray (copy, r);
     }
     size  = r->dim.base;
-    evalStrings (name, baseName, r);
+    evalStrings (name, baseName, r);  // TODO - stejně jako evalArray
   }
   // printf("register: (%d) %s\n", access, name.c_str());
   // vector fields
@@ -391,6 +419,7 @@ bool RegisterPart::convert(const registerType * r) {
     fp.convert (*this, e);
     fields.push_back (fp);
   }
+  copy.push_back (* this);
   return true;
 }
 void RegisterPart::validate() {

@@ -23,6 +23,8 @@ struct MandatoryPart {
   bool          unused;   // true pokud se nepoužívá - není v popisu XML
   explicit MandatoryPart (DeviceTree * p) noexcept : root(p), part_id(0),
            name(), comment(), address(0lu), width(TYPE_BIT), size(0lu), unused(false) {};
+  MandatoryPart (const MandatoryPart & o) noexcept : root(o.root), part_id(o.part_id),
+           name(o.name), comment(o.comment), address(o.address), width(o.width), size(o.size), unused(o.unused) {};
   virtual ~MandatoryPart () {};
 };
 struct EnumValuesPart {
@@ -36,6 +38,8 @@ struct EnumPart {
   std::string                 name;
   std::vector<EnumValuesPart> values;
   explicit EnumPart () noexcept : name(), values() {};
+  EnumPart (const EnumPart & o) noexcept : name(o.name), values() {
+                                for (auto & e: o.values) values.push_back (e); }
   void add (const EnumValuesPart & evp) {
     values.push_back (evp);
   }
@@ -47,6 +51,8 @@ struct FieldPart : public MandatoryPart {   // width je zde bit, ale používá 
   EnumPart                eenum;
   std::vector<FieldPart>  fld_union;
   explicit FieldPart (DeviceTree * p) noexcept : MandatoryPart(p), access(0u), eenum(), fld_union() {};
+  FieldPart (const FieldPart & o) noexcept : MandatoryPart(o), access (o.access), eenum (o.eenum), fld_union() {
+                                  for (auto & e: o.fld_union) fld_union.push_back(e); }
   virtual ~FieldPart () {};
   void convert (RegisterPart & p, fieldType & f);
   void validate   ();
@@ -61,12 +67,18 @@ struct RegisterPart : public MandatoryPart {
   unsigned long             resetValue;
   explicit RegisterPart (DeviceTree * p) noexcept : MandatoryPart(p), 
            fields(), reg_union(), baseName(), access(0u), resetMask(0ul), resetValue(0xFFFFFFFFul) {};
+  RegisterPart (const RegisterPart & o) noexcept : MandatoryPart (o), fields (), reg_union(),
+           baseName (o.baseName), access (o.access), resetMask (o.resetMask), resetValue (o.resetValue) {            
+           for (auto & e: o.fields) fields.push_back (e);
+           for (auto & e: o.reg_union) reg_union.push_back (e);
+           };
   virtual ~RegisterPart () {};
-  bool convert (const registerType * r);
+  bool convert    (std::vector<RegisterPart> & copy, const registerType * r);
   void validate   ();
   void checkNames ();
   void fillGaps   ();
   void structutalize_union ();
+  bool evalArray  (std::vector<RegisterPart> & copy, const registerType * r);
 };
 struct InterruptPartC {
   const char * name;

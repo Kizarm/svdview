@@ -211,11 +211,11 @@ void PrinterHpp::printRegister(RegisterPart & r, string & out, const int indent)
   }
 }
 void PrinterHpp::printRegDef(RegisterPart & r, string & out, const int indent) {
+  if (r.unused) return;
   const string reg = r.baseName;
   const string regdef = reg + "_DEF";
   const int fill = indent - reg.size ();
-  out += cprintf("  union %s%*s {  //!< [%04lx](%02lx)[0x%08lX] %s\n", regdef.c_str(), fill, "",
-                 r.address, r.width * r.size, r.resetValue, r.comment.c_str());
+  out += cprintf("  union %s%*s {  //!< %s\n", regdef.c_str(), fill, "", r.comment.c_str());
   // vypiš enumerations, pokud existují
   printEnumerations (r, out);
   out += cprintf("    struct {\n");
@@ -239,14 +239,14 @@ void PrinterHpp::printRegInst(RegisterPart & r, string & out, const int indent) 
   out += "  };\n";
 }
 void PrinterHpp::printRegSimple(RegisterPart & r, string & out, const int indent) {
-  const string reg = r.baseName;
-  const string regdef = reg + "_DEF";
-  string fs;
+  const string regdef = r.baseName + "_DEF";
+  string   fs, reg = r.name;
   if (r.size > 1ul) {
+    reg = r.baseName; // pole
     fs = cprintf("[%ld]", r.size);
   }
-  out += cprintf("%s %s %s %s;  //!< register definition\n", accessStrings[r.access],
-                 regdef.c_str(), reg.c_str(), fs.c_str()); // pokud je to pole, zde
+  out += cprintf("%s %s %s %s;  //!< [%04lx](%02lx)[0x%08lX]\n", accessStrings[r.access],
+                 regdef.c_str(), reg.c_str(), fs.c_str(),r.address, r.width * r.size, r.resetValue);
 }
 void PrinterHpp::printEnumerations(RegisterPart & r, string & out) {
   for (auto & f: r.fields) {
