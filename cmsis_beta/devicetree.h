@@ -101,7 +101,10 @@ struct PeripheralPart : public MandatoryPart {
   std::vector<InterruptPart> interrupts;
   unsigned long              struct_len;    // pro kontrolu délky struktur
   explicit PeripheralPart (DeviceTree * p) noexcept : MandatoryPart(p), 
-           groupName(), baseName(), registers(), interrupts(), struct_len(0ul) {};
+      groupName(), baseName(), registers(), interrupts(), struct_len(0ul) {};
+  PeripheralPart (const PeripheralPart & o) noexcept : MandatoryPart(o),
+      groupName (o.groupName), baseName (o.baseName), registers(), interrupts(), struct_len(o.struct_len) {
+      for (auto & e: o.registers) registers.push_back(e); for (auto & e: o.interrupts) interrupts.push_back(e); };
   virtual ~PeripheralPart () { };
   void validate   ();
   void convert    (const peripheralType * p);

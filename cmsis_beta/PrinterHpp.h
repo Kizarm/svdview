@@ -23,7 +23,6 @@ class PrinterHpp : public DeviceTree {
     void printPerpheralDef     (PeripheralPart & p, std::string & out, const int indent);
     
     void printRegisters        (PeripheralPart & p, std::string & out);
-    void printRegister         (RegisterPart   & r, std::string & out, const int indent);
     void printRegDef           (RegisterPart   & r, std::string & out, const int indent);
     void printRegInst          (RegisterPart   & r, std::string & out, const int indent);
     void printRegSimple        (RegisterPart   & r, std::string & out, const int indent);

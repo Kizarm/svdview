@@ -170,48 +170,19 @@ void PrinterHpp::printRegisters(PeripheralPart & p, string & out) {
     if (len > maxlen) maxlen = len;
   }
   for (auto & r: p.registers) {
-    //if (r.reg_union.size() > 1ul) r.structutalize_union();
-    if (r.fields.size() > 0u) {
-      printRegDef  (r, out, maxlen);
-      printRegInst (r, out, maxlen);
-    }
-    else {
-      printRegister (r, out, maxlen);
-    }
+    printRegDef  (r, out, maxlen);
   }
-}
-// výpis, jen pokud register nemá fields, tedy ani emuns
-void PrinterHpp::printRegister(RegisterPart & r, string & out, const int indent) {
-  const char * rbn  = r.baseName.c_str();
-  const  int   fill = indent - r.baseName.size ();
-  if (r.size > 1u) {                // pole
-    string rs = cprintf("%s %s %s[%ld];%*s //!< [%04lx](%02lx)[0x%08lX] %s\n", accessStrings[r.access], typeNames[r.width], rbn, r.size, fill, "",
-                        r.address, r.width * r.size, r.resetValue, r.comment.c_str());
-    if (r.name.empty()) {           // nemá ekvivalent jména, vypiš jako pole - baseName[len]
-      out += rs;
-    } else {                        // vypiš jako union { struct {uint32_t name}; uint32_t baseName[len] };
-      out += "union {\n";
-      out += "  struct {\n";
-      const char * type_name = typeNames[r.width];
-      out += cprintf("%s %s %s;\n", accessStrings[r.access], type_name, r.name.c_str());
-      out += "  };\n";
-      out += rs + "};\n";
-    }
-  } else {                          // single register
-    string rs = cprintf("%s %s %s;%*s //!< [%04lx](%02lx)[0x%08lX] %s\n", accessStrings[r.access], typeNames[r.width], rbn, fill, "",
-                        r.address, r.width * r.size, r.resetValue, r.comment.c_str());
-    if (r.reg_union.size()) {       // na stejné adrese je více registrů
-      out += "  union {\n";
-      out += rs;
-      for (auto & e: r.reg_union) printRegister (e, out, indent);
-      out += "  };\n";
-    } else {
-      out += rs;
-    }
+  string def;
+  if (p.baseName.empty()) def = p.name;
+  else                    def = p.baseName;
+  out += cprintf("  // PERIPHERAL %s REGISTERS INSTANCES\n", def.c_str());
+  for (auto & r: p.registers) {
+    printRegInst (r, out, maxlen);
   }
 }
 void PrinterHpp::printRegDef(RegisterPart & r, string & out, const int indent) {
-  if (r.unused) return;
+  if (r.unused)         return;
+  if (r.fields.empty()) return;
   const string reg = r.baseName;
   const string regdef = reg + "_DEF";
   const int fill = indent - reg.size ();
@@ -239,14 +210,17 @@ void PrinterHpp::printRegInst(RegisterPart & r, string & out, const int indent) 
   out += "  };\n";
 }
 void PrinterHpp::printRegSimple(RegisterPart & r, string & out, const int indent) {
-  const string regdef = r.baseName + "_DEF";
+  string regdef = r.baseName + "_DEF";
   string   fs, reg = r.name;
+  if (r.fields.empty())  regdef = typeNames[r.width];
+  if (reg.empty())       reg    = r.baseName;           // TODO asi nekonzistence
   if (r.size > 1ul) {
     reg = r.baseName; // pole
     fs = cprintf("[%ld]", r.size);
   }
-  out += cprintf("%s %s %s %s;  //!< [%04lx](%02lx)[0x%08lX]\n", accessStrings[r.access],
-                 regdef.c_str(), reg.c_str(), fs.c_str(),r.address, r.width * r.size, r.resetValue);
+  const int fill = indent - reg.size ();
+  out += cprintf("%s %s%*s %s %s;  //!< [%04lx](%02lx)[0x%08lX]\n", accessStrings[r.access],
+                 regdef.c_str(), fill, "", reg.c_str(), fs.c_str(),r.address, r.width * r.size, r.resetValue);
 }
 void PrinterHpp::printEnumerations(RegisterPart & r, string & out) {
   for (auto & f: r.fields) {
