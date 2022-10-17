@@ -40,7 +40,7 @@ typedef enum {
 } GpioPortNum;
 /// Asociace port Adress a RCC clock
 struct GpioAssocPort {
-  GPIOF_DEF * const portAdr;
+  GPIOF_Type * const portAdr;
   const uint32_t    clkMask;
 };
 /** @file
@@ -131,7 +131,7 @@ class GpioClass {
     }
   private:
     /// Port.
-    GPIOF_DEF * const io;
+    GPIOF_Type * const io;
     /// A pozice pinu na něm, stačí 16.bit
     const uint16_t   pos;
     /// pro funkce setXXX necháme i číslo pinu

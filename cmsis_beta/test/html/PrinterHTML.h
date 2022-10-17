@@ -9,14 +9,14 @@ class PrinterHTML : public DeviceTree {
     void save (const char * name = nullptr) override;
     
     void dumpPeripherals (std::string & out);
-    void dumpPeripheral  (std::string & out, const int id);
-    void dumpDescription (std::string & out, const int per, const int reg);
-    void dumpDescription (std::string & out, const int per, const int reg, const int fie);
-    void fillFieldGaps   ();
+    void dumpDescription (std::string & out, const int per, const int reg) const;
+    void dumpDescription (std::string & out, const int per, const int reg, const int fie) const;
+    void dumpPeripheral  (std::string & out, const int id) const;
   protected:
-    void dumpRegister    (const RegisterPart & r, std::string & out, const int per);
-    void dumpField       (const FieldPart    & f, std::string & out, const int per, const int reg);
-    void dumpEnums       (std::string & out, const std::vector<EnumValuesPart> & values);
+    void fillFieldGaps   ();
+    void dumpRegister    (const RegisterPart & r, std::string & out, const int per) const;
+    void dumpField       (const FieldPart    & f, std::string & out, const int per, const int reg) const;
+    void dumpEnums       (std::string & out, const std::vector<EnumValuesPart> & values) const;
     
 };
 

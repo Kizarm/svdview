@@ -187,12 +187,14 @@ void PeripheralPart::checkNames() {
   sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
     return a.baseName < b.baseName;
   });
+  /*
   for (auto & rr: registers) {
     if (rr.baseName == name) {
       CERR << "register name " << rr.baseName << " equal to parent peripheral name - append _R\n";
       rr.baseName += "_R";
     }
   }
+  */
   vector<RegisterPart> copy;
   string obn;
   char index = 'A';

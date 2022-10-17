@@ -7,7 +7,7 @@ extern "C" uint32_t SystemCoreClock;
 static Usart * Instance = nullptr;
 
 void Usart::irq (void) {
-  volatile USART1_DEF::ISR_DEF status (USART1.ISR);    // načti status přerušení
+  volatile USART1_Type::ISR_DEF status (USART1.ISR);    // načti status přerušení
   char tdata;
   volatile char rdata;
   if (status.B.TC) {                         // od vysílače
@@ -42,7 +42,7 @@ Usart::Usart(const uint32_t baud) noexcept : tx_ring() {
   NVIC_EnableIRQ (USART1_IRQn);
   uint32_t tmp = 0;
   // 5. USART registry 8.bit bez parity
-  USART1.CR1.modify([] (USART1_DEF::CR1_DEF & r) -> uint32_t { // pro ilustraci, co by bylo auto
+  USART1.CR1.modify([] (USART1_Type::CR1_DEF & r) -> uint32_t { // pro ilustraci, co by bylo auto
     r.B.TE      = SET;
   //r.B.RE      = SET;  // příjem je zde zbytečný
   //r.B.RXNEIE  = SET;

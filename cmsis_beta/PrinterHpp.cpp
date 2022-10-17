@@ -12,6 +12,8 @@
  * s ostatními částmi programu. Je tu tedy na výběr.
  * */
 using namespace std;
+static constexpr const char * PERDEF = "_Type";
+static constexpr const char * REGDEF = "_DEF";
 
 static const char * const preamble = R"+-+(
 /* IO definitions (access restrictions to peripheral registers) */
@@ -97,7 +99,7 @@ void PrinterHpp::print(string & out) {
   printInterrupts    (out, 0);
   out += "#endif\n";
 }
-void PrinterHpp::printCpu(string & out) {
+void PrinterHpp::printCpu(string & out) const {
   string cmnt;
   if (!cpu.name.empty() or !cpu.revision.empty() or !cpu.endian.empty()) {
     cmnt += "/*\n";
@@ -113,7 +115,7 @@ void PrinterHpp::printCpu(string & out) {
   out += cprintf("#define __FPU_PRESENT             %s\n", cpu.fpuPresent ? "1" : "0");
 }
 
-void PrinterHpp::printInterrupts(string & out, const int indent) {
+void PrinterHpp::printInterrupts(string & out, const int indent) const {
   size_t maxlen = 0u;
   for (auto & i: interrupts) {  // determine maximum lenght of names
     if (i.name.size() > maxlen) maxlen = i.name.size();
@@ -129,28 +131,27 @@ void PrinterHpp::printInterrupts(string & out, const int indent) {
   out += "};\n";
 }
 
-void PrinterHpp::printStaticAsserts(string & out, const int indent) {
+void PrinterHpp::printStaticAsserts(string & out, const int indent) const {
   out += '\n';
   for (auto & p: peripherals) {
     if (!p.struct_len) continue;
     string def;
     if (p.baseName.empty()) def = p.name;
     else                    def = p.baseName;
-    out += cprintf ("static_assert (sizeof(struct %s_DEF) == %ld, \"size error %s\");\n", def.c_str(), p.struct_len, p.name.c_str());
+    out += cprintf ("static_assert (sizeof(struct %s%s) == %ld, \"size error %s\");\n", def.c_str(), PERDEF, p.struct_len, p.name.c_str());
   }
 }
-
-void PrinterHpp::printPerpheralDef(PeripheralPart & p, string & out, const int indent) {
+void PrinterHpp::printPerpheralDef(const PeripheralPart & p, string & out, const int indent) const {
   string def (p.name);
   out += cprintf("\n// ////////////////////+++ %s +-+//////////////////// //\n", def.c_str());
   const int spaces = indent - p.name.size();
-  def += "_DEF";
+  def += PERDEF;
   def += insert_spaces (spaces);
   const char * dn = def.c_str();
   out += cprintf("struct %s { /*!< %s */\n", dn, p.comment.c_str());
 }
 
-void PrinterHpp::printPerpheralAddress(PeripheralPart & p, string & out, const int indent) {
+void PrinterHpp::printPerpheralAddress(const PeripheralPart & p, string & out, const int indent) const {
   string sn (p.name);
   sn += insert_spaces (indent - sn.size());
   const char * nm = sn.c_str();
@@ -158,12 +159,12 @@ void PrinterHpp::printPerpheralAddress(PeripheralPart & p, string & out, const i
   if (p.baseName.empty()) def = p.name;
   else                    def = p.baseName;
   const int spaces = indent - def.size();
-  def += "_DEF";
+  def += PERDEF;
   def += insert_spaces (spaces);
   const char * dn = def.c_str();
   out += cprintf("static %s & %s = * reinterpret_cast<%s *> (0x%08lx);\n", dn, nm, dn, p.address);
 }
-void PrinterHpp::printRegisters(PeripheralPart & p, string & out) {
+void PrinterHpp::printRegisters(const PeripheralPart & p, string & out) const {
   size_t maxlen = 0u;
   for (auto & r: p.registers) {
     const size_t len = r.baseName.size();
@@ -180,11 +181,11 @@ void PrinterHpp::printRegisters(PeripheralPart & p, string & out) {
     printRegInst (r, out, maxlen);
   }
 }
-void PrinterHpp::printRegDef(RegisterPart & r, string & out, const int indent) {
+void PrinterHpp::printRegDef(const RegisterPart & r, string & out, const int indent) const {
   if (r.unused)         return;
   if (r.fields.empty()) return;
   const string reg = r.baseName;
-  const string regdef = reg + "_DEF";
+  const string regdef = reg + REGDEF;
   const int fill = indent - reg.size ();
   out += cprintf("  union %s%*s {  //!< %s\n", regdef.c_str(), fill, "", r.comment.c_str());
   // vypiš enumerations, pokud existují
@@ -199,7 +200,7 @@ void PrinterHpp::printRegDef(RegisterPart & r, string & out, const int indent) {
   if (r.reg_union.empty()) return;
   for (auto & e: r.reg_union) printRegDef (e, out, indent);
 }
-void PrinterHpp::printRegInst(RegisterPart & r, string & out, const int indent) {
+void PrinterHpp::printRegInst(const RegisterPart & r, string & out, const int indent) const {
   if (r.reg_union.empty()) {
     printRegSimple (r, out, indent);
     return;
@@ -209,8 +210,8 @@ void PrinterHpp::printRegInst(RegisterPart & r, string & out, const int indent) 
   for (auto & e: r.reg_union) printRegSimple (e, out, indent);
   out += "  };\n";
 }
-void PrinterHpp::printRegSimple(RegisterPart & r, string & out, const int indent) {
-  string regdef = r.baseName + "_DEF";
+void PrinterHpp::printRegSimple(const RegisterPart & r, string & out, const int indent) const {
+  string regdef = r.baseName + REGDEF;
   string   fs, reg = r.name;
   if (r.fields.empty())  regdef = typeNames[r.width];
   if (reg.empty())       reg    = r.baseName;           // TODO asi nekonzistence
@@ -222,7 +223,7 @@ void PrinterHpp::printRegSimple(RegisterPart & r, string & out, const int indent
   out += cprintf("%s %s%*s %s %s;  //!< [%04lx](%02lx)[0x%08lX]\n", accessStrings[r.access],
                  regdef.c_str(), fill, "", reg.c_str(), fs.c_str(),r.address, r.width * r.size, r.resetValue);
 }
-void PrinterHpp::printEnumerations(RegisterPart & r, string & out) {
+void PrinterHpp::printEnumerations(const RegisterPart & r, string & out) const {
   for (auto & f: r.fields) {
     if (f.eenum.values.empty()) continue;
     switch (m_eprt) {
@@ -243,7 +244,7 @@ void PrinterHpp::printEnumerations(RegisterPart & r, string & out) {
     out += "    };\n";
   }
 }
-string PrinterHpp::determine_type(FieldPart& f) {
+string PrinterHpp::determine_type(const FieldPart& f) const {
   string result;
   if (m_eprt == DECLARE_ONLY) {
     result = string (typeNames[f.width]);
@@ -257,7 +258,7 @@ string PrinterHpp::determine_type(FieldPart& f) {
   result = f.eenum.name;
   return result;
 }
-size_t PrinterHpp::determine_type_len (RegisterPart & r) {
+size_t PrinterHpp::determine_type_len (const RegisterPart & r) const {
   size_t maxlen = 0u;
   for (auto & f: r.fields) {
     const string type_str = determine_type (f);
@@ -265,7 +266,7 @@ size_t PrinterHpp::determine_type_len (RegisterPart & r) {
   }
   return maxlen;
 }
-void PrinterHpp::printFields(RegisterPart & r, string & out) {
+void PrinterHpp::printFields(const RegisterPart & r, string & out) const {
   string res;
   size_t maxlen = 0ul;
   for (auto & f: r.fields) {
@@ -281,20 +282,18 @@ void PrinterHpp::printFields(RegisterPart & r, string & out) {
   }
   out += res;
 }
-static const char * const fmt_wo = R"---(
-    explicit %s () noexcept { R = 0x%08lxu; }
+static const char * const fmt_wo = R"---(    explicit %s () noexcept { R = 0x%08lxu; }
     template<typename F> void setbit (F f) volatile {
       %s r;
       R = f (r);
     }
 )---";
-static const char * const fmt_rw = R"---(
-    template<typename F> void modify (F f) volatile {
+static const char * const fmt_rw = R"---(    template<typename F> void modify (F f) volatile {
       %s r; r.R = R;
       R = f (r);
     }
 )---";
-void PrinterHpp::printMethods(const string & regdef, const unsigned int access, const unsigned long resetValue, string & out) {
+void PrinterHpp::printMethods(const string & regdef, const unsigned int access, const unsigned long resetValue, string & out) const {
   const char * defptr = regdef.c_str();
   if (access == 1u) {   // read only - copy constructor 
     out += cprintf("\n    explicit %s (volatile %s & o) noexcept { R = o.R; };\n", defptr, defptr);

@@ -70,7 +70,7 @@ void Default_Handler (void) {
 }
 )---";
 
-void PrinterHpp::StartupTemplate(string & name) {
+void PrinterHpp::StartupTemplate(string & name) const {
   string out;
   out += template1;
   size_t maxlen = 0lu;

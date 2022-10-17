@@ -35,7 +35,7 @@ void PrinterHTML::dumpPeripherals(string & out) {                 // left table
   }
   out += "</table>\n";
 }
-void PrinterHTML::dumpPeripheral(string & out, const int id) {    // right table
+void PrinterHTML::dumpPeripheral(string & out, const int id) const {    // right table
   if (peripherals.size() <= (size_t) id) return;
   string sder, info;
   const PeripheralPart & pp = peripherals [id];
@@ -61,7 +61,7 @@ void PrinterHTML::dumpPeripheral(string & out, const int id) {    // right table
   }
   out += cprintf("</table>\n");
 }
-void PrinterHTML::dumpRegister(const RegisterPart & r, string & out, const int per) {
+void PrinterHTML::dumpRegister(const RegisterPart & r, string & out, const int per) const {
   out += cprintf(" <tr><td%s onclick=\"RegisterDesc(%d,%d);\">%s</td><td>%04lX</td>\n", classes[r.access],
                  per, r.part_id, r.baseName.c_str(), r.address);
   for (const auto & f: r.fields) {
@@ -69,14 +69,14 @@ void PrinterHTML::dumpRegister(const RegisterPart & r, string & out, const int p
   }
   out += cprintf("</tr>\n");
 }
-void PrinterHTML::dumpField(const FieldPart & f, string & out, const int per, const int reg) {
+void PrinterHTML::dumpField(const FieldPart & f, string & out, const int per, const int reg) const {
   string s, nm;
   if (!f.unused) nm = f.name;
   if (f.size > 1) s = cprintf(" colspan=\"%lu\"", f.size);
   out += cprintf("<td%s%s onclick=\"Field(%d, %d, %d);\">%s</td>\n", s.c_str(), classes[f.access],
                  per, reg, f.part_id, nm.c_str());
 }
-void PrinterHTML::dumpDescription(string & out, const int per, const int reg) { // Register
+void PrinterHTML::dumpDescription(string & out, const int per, const int reg) const { // Register
   const PeripheralPart & pp = peripherals  [per];
   const RegisterPart   & rr = pp.registers [reg];
   
@@ -95,7 +95,7 @@ void PrinterHTML::dumpDescription(string & out, const int per, const int reg) { 
   out += "</div>\n";
 }
 
-void PrinterHTML::dumpDescription(string & out, const int per, const int reg, const int fie) { // Field
+void PrinterHTML::dumpDescription(string & out, const int per, const int reg, const int fie) const { // Field
   const PeripheralPart & pp = peripherals  [per];
   const RegisterPart   & rr = pp.registers [reg];
   const FieldPart      & ff = rr.fields    [fie];
@@ -115,7 +115,7 @@ void PrinterHTML::dumpDescription(string & out, const int per, const int reg, co
   if (ff.eenum.values.empty()) return;
   dumpEnums (out, ff.eenum.values);
 }
-void PrinterHTML::dumpEnums(string & out, const vector<EnumValuesPart> & values) {
+void PrinterHTML::dumpEnums(string & out, const vector<EnumValuesPart> & values) const {
   out += "<table>\n";
   out += "<tr><td> Name </td><td> Value </td><td> Comment </td></tr>\n";
   for (auto & part: values) {

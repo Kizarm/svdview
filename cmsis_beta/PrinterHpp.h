@@ -16,24 +16,24 @@ class PrinterHpp : public DeviceTree {
     void save (const char * name = nullptr) override;
   protected:
     void print (std::string & out);
-    void printCpu              (std::string & out);
-    void printInterrupts       (std::string & out, const int indent);
-    void printStaticAsserts    (std::string & out, const int indent);
-    void printPerpheralAddress (PeripheralPart & p, std::string & out, const int indent);
-    void printPerpheralDef     (PeripheralPart & p, std::string & out, const int indent);
+    void printCpu              (std::string & out) const;
+    void printInterrupts       (std::string & out, const int indent) const;
+    void printStaticAsserts    (std::string & out, const int indent) const;
+    void printPerpheralAddress (const PeripheralPart & p, std::string & out, const int indent) const;
+    void printPerpheralDef     (const PeripheralPart & p, std::string & out, const int indent) const;
     
-    void printRegisters        (PeripheralPart & p, std::string & out);
-    void printRegDef           (RegisterPart   & r, std::string & out, const int indent);
-    void printRegInst          (RegisterPart   & r, std::string & out, const int indent);
-    void printRegSimple        (RegisterPart   & r, std::string & out, const int indent);
-    void printMethods          (const std::string & regdef, const unsigned access, const unsigned long resetValue, std::string & out);
+    void printRegisters        (const PeripheralPart & p, std::string & out) const;
+    void printRegDef           (const RegisterPart   & r, std::string & out, const int indent) const;
+    void printRegInst          (const RegisterPart   & r, std::string & out, const int indent) const;
+    void printRegSimple        (const RegisterPart   & r, std::string & out, const int indent) const;
+    void printMethods          (const std::string & regdef, const unsigned access, const unsigned long resetValue, std::string & out) const;
     
-    void printFields           (RegisterPart   & r, std::string & out);
-    void printEnumerations     (RegisterPart   & r, std::string & out);
+    void printFields           (const RegisterPart   & r, std::string & out) const;
+    void printEnumerations     (const RegisterPart   & r, std::string & out) const;
     
-    void StartupTemplate       (std::string & name);
-    std::string determine_type (FieldPart & f);
-    size_t determine_type_len  (RegisterPart & r);
+    void StartupTemplate       (std::string & name) const;
+    std::string determine_type (const FieldPart & f) const;
+    size_t determine_type_len  (const RegisterPart & r) const;
 };
 
 #endif // PRINTERHPP_H
