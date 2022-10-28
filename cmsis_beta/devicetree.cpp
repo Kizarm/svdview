@@ -57,12 +57,12 @@ static void reg_rename (RegisterPart & r, char & c) {
 static void field_rename (FieldPart & r, char & c) {
   string s (r.name);
   r.name += c++;
-//CERR << "field_rename " << s << " to " << r.name << '\n';
+  CERR << "field_rename " << s << " to " << r.name << '\n';
 }
 static void enum_rename (EnumValuesPart & r, char & c) {
   string s (r.name);
   r.name += c++;
-//CERR << "field_rename " << s << " to " << r.name << '\n';
+  CERR << "enum_rename " << s << " to " << r.name << '\n';
 }
 //////////////////////////////////////////////
 DeviceTree::DeviceTree (const CmsisTree & p) noexcept : MandatoryPart(this),
@@ -187,14 +187,6 @@ void PeripheralPart::checkNames() {
   sort (registers.begin(), registers.end(), [] (RegisterPart & a, RegisterPart & b) {
     return a.baseName < b.baseName;
   });
-  /*
-  for (auto & rr: registers) {
-    if (rr.baseName == name) {
-      CERR << "register name " << rr.baseName << " equal to parent peripheral name - append _R\n";
-      rr.baseName += "_R";
-    }
-  }
-  */
   vector<RegisterPart> copy;
   string obn;
   char index = 'A';

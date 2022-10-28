@@ -37,12 +37,6 @@ static const char * const accessStrings[] = {
 static const char * typeNames [] = {
  "BYTE ",  "uint8_t  ", "uint16_t ", "uint24_t ", "uint32_t ",
 };
-/*
-static const char * test_text = R"---(#include "%s"
-int main () {
-  return 0;
-}
-)---";*/
 static string insert_spaces (const int spaces) {
   string result;
   if (spaces <= 0) return result;
@@ -220,7 +214,7 @@ void PrinterHpp::printRegSimple(const RegisterPart & r, string & out, const int 
     fs = cprintf("[%ld]", r.size);
   }
   const int fill = indent - reg.size ();
-  out += cprintf("%s %s%*s %s %s;  //!< [%04lx](%02lx)[0x%08lX]\n", accessStrings[r.access],
+  out += cprintf("%s %s%*s %15s %s;  //!< [%04lx](%02lx)[0x%08lX]\n", accessStrings[r.access],
                  regdef.c_str(), fill, "", reg.c_str(), fs.c_str(),r.address, r.width * r.size, r.resetValue);
 }
 void PrinterHpp::printEnumerations(const RegisterPart & r, string & out) const {

@@ -16,7 +16,7 @@ string cprintf (const char *__restrict fmt, ...) {
 void check_pattern(const string & str, const char * const pattern) {
   const regex str_expr (pattern);
   const bool result = regex_match (str, str_expr);
-  if (!result) CERR << "pattern error " << pattern << '\n';
+  if (!result) CERR << "\"" << str << "\" pattern error " << pattern << '\n';
 }
 unsigned check_enumeration(const string & str, StringEnumerator const * enumeration, const size_t len) {
   unsigned result = 0;
@@ -27,7 +27,7 @@ unsigned check_enumeration(const string & str, StringEnumerator const * enumerat
       break;
     }
   }
-  if (!result) CERR << "enumeration error " << str << " not in list\n";
+  if (!result) CERR << "enumeration error \"" << str << "\" not in list\n";
   return result;
 }
 const unsigned long cmsis_toUlong (const string & str) {
