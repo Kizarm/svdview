@@ -156,7 +156,7 @@ void PrinterHpp::printPerpheralAddress(const PeripheralPart & p, string & out, c
   def += PERDEF;
   def += insert_spaces (spaces);
   const char * dn = def.c_str();
-  out += cprintf("static %s & %s = * reinterpret_cast<%s *> (0x%08lx);\n", dn, nm, dn, p.address);
+  out += cprintf("static %s & %s = * reinterpret_cast<%s * const> (0x%08lx);\n", dn, nm, dn, p.address);
 }
 void PrinterHpp::printRegisters(const PeripheralPart & p, string & out) const {
   size_t maxlen = 0u;
