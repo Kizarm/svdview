@@ -1,11 +1,7 @@
 #ifndef PRINTERHPP_H
 #define PRINTERHPP_H
 #include "devicetree.h"
-
-enum PRINT_ENUMS {
-  DECLARE_ONLY = 0,
-  OLD_STYLE, NEW_STYLE,
-};
+#include "cmsis.h"
 
 class PrinterHpp : public DeviceTree {
   PRINT_ENUMS m_eprt;
