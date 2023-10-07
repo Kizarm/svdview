@@ -11,6 +11,7 @@ svdview
 cmsis_beta/build/
 cmsis_beta/cmsis
 cmsis_beta/libcmsis.a
+cmsis_beta/test/hello/fget
 cmsis_beta/test/hello/STM32F0x1.h
 cmsis_beta/test/hello/STM32F0x1_startup.c
 cmsis_beta/test/html/bin/cmsis.js

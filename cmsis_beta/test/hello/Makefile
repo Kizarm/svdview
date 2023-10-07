@@ -32,12 +32,19 @@ $(BLD)gpio.o: STM32F0x1.h
 -include $(BLD)*.d
 # místo MAKE v adresáři get lze jednoduše použít "unzip svd.zip", výrobce tam má stejně chybu.
 # Je to tady takhle, protože je tam adresář STM, odkud lze SVD získat. Blbě se to hledá.
-STM32F0x1.h STM32F0x1_startup.c: ../../cmsis
-	@echo wget from STMicro
-	cd get && $(MAKE) all
-	../../cmsis STM32F0x1.svd -new
-../../cmsis:
-	cd ../../ && $(MAKE) -j4 all
+#STM32F0x1.h STM32F0x1_startup.c: ../../cmsis
+#	@echo wget from STMicro
+#	cd get && $(MAKE) all
+#	../../cmsis STM32F0x1.svd -new
+#../../cmsis:
+#	cd ../../ && $(MAKE) -j4 all
+# Celkově - nový program fget
+STM32F0x1.h STM32F0x1_startup.c: ./fget
+	./fget
+./fget: curl.cpp ../../libcmsis.a
+	g++ -Wall -Os -o fget curl.cpp -lcurl -lzip -L../.. -lcmsis
+../../libcmsis.a:
+	cd ../.. && $(MAKE) all
 $(PRJ).elf: $(BOBJS)
 	-@echo [LD $(COM)] $@
 	@$(LD) $(LFLAGS) -o $(PRJ).elf $(BOBJS) $(LDLIBS)
@@ -58,6 +65,6 @@ $(BLD):
 	mkdir $(BLD)
 # vycisti
 clean:
-	$(DEL) $(BLD)* *.lst *.bin *.elf *.map *~ STM32F0x1.svd
-	cd get && $(MAKE) clean
+	$(DEL) $(BLD)* *.lst *.bin *.elf *.map *~
+#	cd get && $(MAKE) clean
 .PHONY: all clean
